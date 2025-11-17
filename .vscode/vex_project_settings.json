@@ -1,0 +1,19 @@
+{
+	"extension": {
+		"version": "0.7.2025041600",
+		"json": 2
+	},
+	"project": {
+		"name": "XFC Primary",
+		"description": "The XFC competition software. Designed for use with V5RC based competitions.",
+		"creationDate": "10/1/2025, 2:42:07 PM",
+		"platform": "V5",
+		"language": "cpp",
+		"slot": 3,
+		"sdkVersion": "V5_20240802_15_00_00",
+		"cpp": {
+			"includePath": [],
+			"printf_float": true
+		}
+	}
+}

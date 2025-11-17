@@ -1,0 +1,17 @@
+    {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Print VS Code Variables",
+                "type": "shell",
+                "command": "echo 'File: ${file}' && echo 'Workspace Folder: ${workspaceFolderBasename}' && echo 'Relative File: ${relativeFile}' && echo 'User Home: ${userHome}'",
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "presentation": {
+                    "reveal": "always"
+                }
+            }
+        ]
+    }
