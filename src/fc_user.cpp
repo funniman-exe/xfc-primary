@@ -9,6 +9,8 @@ using namespace vex;
 #include "fc_instances.h"
 #include "fc_log.h"
 
+#include "../data/peetah.h"
+
 bool shownBrainBatteryWarn = false;
 
 #define ticksPerRotation 36000
@@ -49,6 +51,9 @@ double toDegrees( double radians )
 void fc_user()
 {
 	fc_log( logTypes::Info, true, false, __func__, "Begin Usercontrol!\n" );
+
+	g_brain.Screen.clearScreen();
+	g_brain.Screen.drawImageFromBuffer( peetah_png, 0, 0, peetah_png_len );
 
 	if ( odometryThread != nullptr ) g_fcOdometry->killThread();
 

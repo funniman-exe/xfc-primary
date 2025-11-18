@@ -300,7 +300,7 @@ void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, cons
         fmt++;
     }
 
-    __fc_log_print( tmp, sendToBrain, sendToController );
+//    __fc_log_print( tmp, sendToBrain, sendToController );
 }
 
 void fc_log( uint8_t type, bool sendToController, bool usePrefix, const char* loc, const char* fmt, ... )
