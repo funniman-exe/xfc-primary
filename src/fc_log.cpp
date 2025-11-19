@@ -106,7 +106,7 @@ void __fc_log_print( std::string str, bool sendToBrain, bool sendToController )
     if ( sendToController ) g_controller.Screen.print( str.c_str() );
     puts( str.c_str() );
 
-    str.clear();
+    str = "";
 }
 
 void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, const char* fmt, va_list args )
@@ -300,7 +300,7 @@ void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, cons
         fmt++;
     }
 
-//    __fc_log_print( tmp, sendToBrain, sendToController );
+    __fc_log_print( tmp, sendToBrain, sendToController );
 }
 
 void fc_log( uint8_t type, bool sendToController, bool usePrefix, const char* loc, const char* fmt, ... )
@@ -366,7 +366,7 @@ void fc_log( uint8_t type, bool sendToController, bool usePrefix, const char* lo
         g_brain.Screen.setPenColor( red );
         g_brain.Screen.setFillColor( red );
         g_brain.Screen.clearScreen();
-        g_brain.Screen.drawRectangle( 0, 0, 1000, 1000 );
+        g_brain.Screen.drawRectangle( 0, 0, 480, 240 );
         g_brain.Screen.setPenColor( white );
         g_brain.Screen.setCursor( 1, 1 );
 

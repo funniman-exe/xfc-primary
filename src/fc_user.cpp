@@ -9,7 +9,7 @@ using namespace vex;
 #include "fc_instances.h"
 #include "fc_log.h"
 
-#include "../data/peetah.h"
+#include "../data/horse.h"
 
 bool shownBrainBatteryWarn = false;
 
@@ -53,32 +53,38 @@ void fc_user()
 	fc_log( logTypes::Info, true, false, __func__, "Begin Usercontrol!\n" );
 
 	g_brain.Screen.clearScreen();
-	g_brain.Screen.drawImageFromBuffer( peetah_png, 0, 0, peetah_png_len );
+	g_brain.Screen.drawImageFromBuffer( horse_png, 0, 0, horse_png_len );
 
 	if ( odometryThread != nullptr ) g_fcOdometry->killThread();
 
-	while (true) {
+	while ( true ) {
 		//g_brain.Screen.clearScreen();
 		fc_updateControl();
 
-		/*encoderX = m_trackingWheelMotor1.angle( rotationUnits::raw );
+		// get encoder angles
+		encoderX = m_trackingWheelMotor1.angle( rotationUnits::raw );
 		encoderX = m_trackingWheelMotor2.angle( rotationUnits::raw );
 
+		// detect if angle changed
 		if ( encoderX != encoderX_prev )
 			encoderX_change = encoderX - encoderX_prev;
 		
 		encoderX_prev = encoderX;
 
+		// detect if angle changed
 		if ( encoderY != encoderY_prev )
 			encoderY_change = encoderY - encoderY_prev;
 		
 		encoderY_prev = encoderY;
 
+		// get distance
 		encoderX_change_dist = toRadians( encoderX_change / 100 ) * omniTrackingWheelRadiusMM;
 		encoderY_change_dist = toRadians( encoderY_change / 100 ) * omniTrackingWheelRadiusMM;
 
+		// average the two distances
 		encoder_total_mm = ( encoderX_change_dist + encoderY_change_dist ) / 2.0;
 
+		// adjust heading
 		heading += ( encoderY_change - encoderX_change ) / 9.2345;
 
 		if ( heading > 180 )
@@ -87,6 +93,7 @@ void fc_user()
 		if ( heading < -180 )
 			heading = 360 + heading;
 
+		// math
 		x += encoder_total_mm * cos( toRadians( heading ) );
 		y += encoder_total_mm * sin( toRadians( heading ) );
 
@@ -96,7 +103,7 @@ void fc_user()
 		g_brain.Screen.clearScreen();
 		g_brain.Screen.setCursor( 1, 1 );
 		fc_log( logTypes::Info, false, false, __func__, "x: %d\n", x );
-		fc_log( logTypes::Info, false, false, __func__, "y: %d\n", y );*/
+		fc_log( logTypes::Info, false, false, __func__, "y: %d\n", y );
 
 	    wait( 5, msec ); // Do nothing
 	}
