@@ -62,7 +62,7 @@ void fc_user()
 		fc_updateControl();
 
 		// get encoder angles
-		encoderX = m_trackingWheelMotor1.angle( rotationUnits::raw );
+		/*encoderX = m_trackingWheelMotor1.angle( rotationUnits::raw );
 		encoderX = m_trackingWheelMotor2.angle( rotationUnits::raw );
 
 		// detect if angle changed
@@ -103,7 +103,7 @@ void fc_user()
 		g_brain.Screen.clearScreen();
 		g_brain.Screen.setCursor( 1, 1 );
 		fc_log( logTypes::Info, false, false, __func__, "x: %d\n", x );
-		fc_log( logTypes::Info, false, false, __func__, "y: %d\n", y );
+		fc_log( logTypes::Info, false, false, __func__, "y: %d\n", y );*/
 
 	    wait( 5, msec ); // Do nothing
 	}

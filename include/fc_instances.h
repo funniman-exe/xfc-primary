@@ -13,5 +13,6 @@ extern fc_drivetrain *g_fcDrivetrain;
 // extern fc_gantry *g_fcGantry;
 extern fc_intake *g_fcIntake;
 extern fc_output* g_fcOutput;
+extern fc_parking* g_fcParking;
 extern pneumatics *g_pneumatics;
 extern fc_odometry *g_fcOdometry;

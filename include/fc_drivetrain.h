@@ -9,10 +9,10 @@ extern int g_totalMotors;
 class fc_drivetrain
 {
     private:
-    motor m_motorLeftA = motor( PORT10, gearSetting::ratio36_1, true );
+    motor m_motorLeftA = motor( PORT11, gearSetting::ratio36_1, true );
     motor m_motorLeftB = motor( PORT20, gearSetting::ratio36_1, true );
     motor m_motorRightA = motor( PORT1, gearSetting::ratio36_1, false );
-    motor m_motorRightB = motor( PORT11, gearSetting::ratio36_1, false );
+    motor m_motorRightB = motor( PORT10, gearSetting::ratio36_1, false );
 
     motor_group m_motorsLeft = motor_group( m_motorLeftA, m_motorLeftB );
     motor_group m_motorsRight = motor_group( m_motorRightA, m_motorRightB );
@@ -65,7 +65,7 @@ class fc_intake
 {
     private:
     motor m_motorA = motor( PORT18, gearSetting::ratio36_1, false );
-    motor m_motorB = motor( PORT19, gearSetting::ratio36_1, false );
+    motor m_motorB = motor( PORT17, gearSetting::ratio36_1, false );
     motor_group m_intakeMotors = motor_group( m_motorA, m_motorB );
 
     //bool disableUse = false;
@@ -91,6 +91,25 @@ class fc_output
 
     public:
     fc_output();
+
+    void setSpeed( double velocity, velocityUnits units );
+
+    void spin( directionType direction );
+    void spinFor( double distance, directionType direction, rotationUnits units, bool waitForFinish );
+
+    void stop();
+    void stop( brakeType mode );
+};
+
+class fc_parking
+{
+    private:
+    motor m_parkingMotor = motor( PORT19, gearSetting::ratio36_1, false );
+
+    //bool disableUse = false;
+
+    public:
+    fc_parking();
 
     void setSpeed( double velocity, velocityUnits units );
 

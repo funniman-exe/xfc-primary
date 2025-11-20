@@ -70,7 +70,7 @@ fc_drivetrain::fc_drivetrain()
     {
         if ( g_totalMotors + 4 > MAX_MOTORS )
         {
-            fc_log( logTypes::ERROR, false, true, __func__, "ERROR! Too many Motors! (get rid of some)\n" );
+            fc_log( logTypes::ERROR, false, true, __func__, "Too many Motors! (get rid of some)\n" );
             return;
         }
 
@@ -257,7 +257,7 @@ fc_intake::fc_intake()
     {
         if ( g_totalMotors + 1 > MAX_MOTORS )
         {
-            fc_log( logTypes::ERROR, false, true, __func__, "ERROR! Too many Motors! E\n" );
+            fc_log( logTypes::ERROR, false, true, __func__, "Too many Motors! E\n" );
             return;
         }
         
@@ -320,7 +320,7 @@ fc_output::fc_output()
     {
         if ( g_totalMotors + 1 > MAX_MOTORS )
         {
-            fc_log( logTypes::ERROR, false, true, __func__, "ERROR! Too many Motors! (remove some dumbshit)\n" );
+            fc_log( logTypes::ERROR, false, true, __func__, "Too many Motors! (remove some dumbshit)\n" );
             return;
         }
         
@@ -372,4 +372,64 @@ void fc_output::stop( brakeType mode )
 {
     //if ( !disableUse )
         m_outputMotor.stop( mode );
+}
+
+fc_parking::fc_parking()
+{
+    try
+    {
+        if ( g_totalMotors + 1 > MAX_MOTORS )
+        {
+            fc_log( logTypes::ERROR, false, true, __func__, "Too many Motors! (remove some fucker)\n" );
+            return;
+        }
+        
+        int totalMotorsPrev = g_totalMotors;
+
+        if ( m_parkingMotor.installed() )
+            g_totalMotors++;
+
+        if ( totalMotorsPrev + 1 != g_totalMotors )
+        {
+            //disableUse = true;
+            fc_log( logTypes::ERROR, false, true, __func__, "No Output motor! (Can't shit)\n" );
+            //fc_log( logTypes::ERROR, false, false, true, __func__, "Output system has been disabled. Durrrr" );
+        }
+
+        m_parkingMotor.setVelocity( 50, velocityUnits::rpm );
+    }
+    catch( std::exception e )
+    {
+        fc_log( logTypes::FATAL, false, true, __func__, e.what() );
+    }
+}
+
+void fc_parking::setSpeed( double velocity, velocityUnits units )
+{
+    //if ( !disableUse )
+        m_parkingMotor.setVelocity( velocity, units );
+}
+
+void fc_parking::spin( directionType direction )
+{
+    //if ( !disableUse )
+        m_parkingMotor.spin( direction );
+}
+
+void fc_parking::spinFor( double distance, directionType direction, rotationUnits units, bool waitForFinish )
+{
+    //if ( !disableUse )
+        m_parkingMotor.spinFor( direction, distance, units, waitForFinish );
+}
+
+void fc_parking::stop()
+{
+    //if ( !disableUse )
+        m_parkingMotor.stop();
+}
+
+void fc_parking::stop( brakeType mode )
+{
+    //if ( !disableUse )
+        m_parkingMotor.stop( mode );
 }

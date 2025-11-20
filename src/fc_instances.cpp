@@ -17,5 +17,6 @@ fc_drivetrain *g_fcDrivetrain = nullptr;
 // fc_gantry *g_fcGantry = nullptr;
 fc_intake *g_fcIntake = nullptr;
 fc_output *g_fcOutput = nullptr;
+fc_parking *g_fcParking = nullptr;
 pneumatics *g_pneumatics = nullptr;
 fc_odometry *g_fcOdometry = nullptr;

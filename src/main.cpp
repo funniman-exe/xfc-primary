@@ -46,6 +46,9 @@ void init()
         g_fcOutput = new fc_output();
         g_fcOutput->setSpeed( 70, velocityUnits::pct );
 
+        g_fcParking = new fc_parking();
+        g_fcParking->setSpeed( 70, velocityUnits::pct );
+
         g_pneumatics = new pneumatics( g_brain.ThreeWirePort.A );
         g_pneumatics->close();
 
@@ -87,6 +90,12 @@ void deinit()
 
         delete g_fcOutput;
         g_fcOutput = nullptr;
+
+        delete g_fcParking;
+        g_fcParking = nullptr;
+
+        delete g_pneumatics;
+        g_pneumatics = nullptr;
     }
     catch( std::exception e )
     {
