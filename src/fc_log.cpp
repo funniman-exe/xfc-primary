@@ -100,13 +100,14 @@ void __fc_log_parse_signed( std::string str, bool sendToBrain, bool sendToContro
 #define PARSER_LENGTH_LONG 3
 #define PARSER_LENGTH_LONG_LONG 4
 
-void __fc_log_print( std::string str, bool sendToBrain, bool sendToController )
+// str needs to be a pointer because otherwise it can't be cleared
+void __fc_log_print( std::string *str, bool sendToBrain, bool sendToController )
 {
-    if ( sendToBrain ) g_brain.Screen.print( str.c_str() );
-    if ( sendToController ) g_controller.Screen.print( str.c_str() );
-    puts( str.c_str() );
+    if ( sendToBrain ) g_brain.Screen.print( str->c_str() );
+    if ( sendToController ) g_controller.Screen.print( str->c_str() );
+    puts( str->c_str() );
 
-    str = "";
+    str->clear();
 }
 
 void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, const char* fmt, va_list args )
@@ -131,7 +132,7 @@ void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, cons
                         break;
                     
                     case '\n':
-                        __fc_log_print( tmp, sendToBrain, sendToController );
+                        __fc_log_print( &tmp, sendToBrain, sendToController );
 
                         if ( sendToBrain ) g_brain.Screen.newLine();
                         if ( sendToController ) g_controller.Screen.newLine();
@@ -225,7 +226,7 @@ void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, cons
                     case 'f':
                         if ( sendToBrain )
                         {
-                            __fc_log_print( tmp, sendToBrain, sendToController );
+                            __fc_log_print( &tmp, sendToBrain, sendToController );
                             g_brain.Screen.setPenColor( va_arg( args, uint32_t ) );
                         }
                         break;
@@ -233,7 +234,7 @@ void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, cons
                     case 'b':
                         if ( sendToBrain )
                         {
-                            __fc_log_print( tmp, sendToBrain, sendToController );
+                            __fc_log_print( &tmp, sendToBrain, sendToController );
                             g_brain.Screen.setFillColor( va_arg( args, uint32_t ) );
                         }
                         break;
@@ -300,7 +301,7 @@ void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, cons
         fmt++;
     }
 
-    __fc_log_print( tmp, sendToBrain, sendToController );
+    __fc_log_print( &tmp, sendToBrain, sendToController );
 }
 
 void fc_log( uint8_t type, bool sendToController, bool usePrefix, const char* loc, const char* fmt, ... )

@@ -20,3 +20,4 @@ fc_output *g_fcOutput = nullptr;
 fc_parking *g_fcParking = nullptr;
 pneumatics *g_pneumatics = nullptr;
 fc_odometry *g_fcOdometry = nullptr;
+inertial m_inertial( PORT5 );

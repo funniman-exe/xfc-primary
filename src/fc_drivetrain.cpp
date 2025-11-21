@@ -397,6 +397,7 @@ fc_parking::fc_parking()
         }
 
         m_parkingMotor.setVelocity( 50, velocityUnits::rpm );
+        m_parkingMotor.setBrake( brakeType::hold );
     }
     catch( std::exception e )
     {
@@ -408,6 +409,18 @@ void fc_parking::setSpeed( double velocity, velocityUnits units )
 {
     //if ( !disableUse )
         m_parkingMotor.setVelocity( velocity, units );
+}
+
+double fc_parking::getPower( powerUnits power /* = powerUnits::watt */ )
+{
+    //if ( !disableUse )
+        return m_parkingMotor.power( power );
+}
+
+double fc_parking::getPosition( rotationUnits units /* = rotationUnits::raw */ )
+{
+    //if ( !disableUse )
+        return m_parkingMotor.position( units );
 }
 
 void fc_parking::spin( directionType direction )

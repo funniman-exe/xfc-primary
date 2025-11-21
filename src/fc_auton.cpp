@@ -7,14 +7,14 @@ using namespace vex;
 #include "fc_instances.h"
 #include "fc_log.h"
 
-#include "../data/peetah.h"
+//#include "../data/peetah.h"
 
 void fc_autonomous() 
 {
     fc_log( logTypes::Info, true, false, __func__, "Begin Autonomous\n" );
 
-    g_brain.Screen.clearScreen();
-	g_brain.Screen.drawImageFromBuffer( peetah_png, 0, 0, peetah_png_len );
+//    g_brain.Screen.clearScreen();
+//	g_brain.Screen.drawImageFromBuffer( peetah_png, 0, 0, peetah_png_len );
 
 //    g_fcOdometry->startThread( 10 );
     g_fcDrivetrain->driveFor( 22, fwd, inches, true );

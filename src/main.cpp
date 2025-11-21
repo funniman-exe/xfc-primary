@@ -54,6 +54,10 @@ void init()
 
         g_fcOdometry = new fc_odometry( g_fcDrivetrain, g_fcIntake, g_fcOutput );
 
+        m_inertial.calibrate( 2 );
+
+        while ( m_inertial.isCalibrating() ) { wait( 10, msec ); }
+
         // callback setup
         g_competitionManager.autonomous( fc_autonomous );
         g_competitionManager.drivercontrol( fc_user );

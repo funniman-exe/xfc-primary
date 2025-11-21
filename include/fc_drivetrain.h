@@ -65,7 +65,7 @@ class fc_intake
 {
     private:
     motor m_motorA = motor( PORT18, gearSetting::ratio36_1, false );
-    motor m_motorB = motor( PORT17, gearSetting::ratio36_1, false );
+    motor m_motorB = motor( PORT17, gearSetting::ratio36_1, true );
     motor_group m_intakeMotors = motor_group( m_motorA, m_motorB );
 
     //bool disableUse = false;
@@ -104,7 +104,7 @@ class fc_output
 class fc_parking
 {
     private:
-    motor m_parkingMotor = motor( PORT19, gearSetting::ratio36_1, false );
+    motor m_parkingMotor = motor( PORT19, gearSetting::ratio36_1, true );
 
     //bool disableUse = false;
 
@@ -112,6 +112,9 @@ class fc_parking
     fc_parking();
 
     void setSpeed( double velocity, velocityUnits units );
+
+    double getPower( powerUnits power = powerUnits::watt );
+    double getPosition( rotationUnits units = rotationUnits::raw );
 
     void spin( directionType direction );
     void spinFor( double distance, directionType direction, rotationUnits units, bool waitForFinish );
