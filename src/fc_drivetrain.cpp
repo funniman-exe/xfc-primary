@@ -95,7 +95,6 @@ fc_drivetrain::fc_drivetrain()
             //fc_log( logTypes::ERROR, false, false, true, __func__, "Drivetrain has been disabled. durrrrr" );
         }
 
-        //m_drivetrain.setDriveVelocity( 333, velocityUnits::rpm );
         m_drivetrain.setDriveVelocity( 333, velocityUnits::rpm );
         m_drivetrain.setTurnVelocity( 333, velocityUnits::rpm );
         m_drivetrain.setStopping( brakeType::brake );
@@ -336,7 +335,7 @@ fc_output::fc_output()
             //fc_log( logTypes::ERROR, false, false, true, __func__, "Output system has been disabled. Durrrr" );
         }
 
-        m_outputMotor.setVelocity( 50, velocityUnits::rpm );
+        m_outputMotor.setVelocity( 100, velocityUnits::rpm );
     }
     catch( std::exception e )
     {

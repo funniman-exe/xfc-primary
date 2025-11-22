@@ -2,7 +2,7 @@
 //            XFC ( eXtra Featured Comp-project )            //
 // Designed for the Vex V5 Competition Season of 2025 - 2026 //
 //              Written by funniman.exe (c) 2025             //
-//                Lasted updated - 11/10/2025                //
+//                Lasted updated - 11/21/2025                //
 // --------------------------------------------------------- //
 
 #include "vex.h"

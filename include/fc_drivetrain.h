@@ -6,9 +6,15 @@
 //extern motor *g_motorArray[MAX_MOTORS];
 extern int g_totalMotors;
 
+#define gearRatioSimple( input, output ) input / output
+
 class fc_drivetrain
 {
     private:
+    //motor m_motorLeftA = motor( PORT11, gearSetting::ratio18_1, true );
+    //motor m_motorLeftB = motor( PORT20, gearSetting::ratio18_1, true );
+    //motor m_motorRightA = motor( PORT1, gearSetting::ratio18_1, false );
+    //motor m_motorRightB = motor( PORT10, gearSetting::ratio18_1, false );
     motor m_motorLeftA = motor( PORT11, gearSetting::ratio36_1, true );
     motor m_motorLeftB = motor( PORT20, gearSetting::ratio36_1, true );
     motor m_motorRightA = motor( PORT1, gearSetting::ratio36_1, false );
@@ -17,7 +23,8 @@ class fc_drivetrain
     motor_group m_motorsLeft = motor_group( m_motorLeftA, m_motorLeftB );
     motor_group m_motorsRight = motor_group( m_motorRightA, m_motorRightB );
 
-    drivetrain m_drivetrain = drivetrain( m_motorsLeft, m_motorsRight, 3.25, 12, 8, inches, 14.5 );
+    //drivetrain m_drivetrain = drivetrain( m_motorsLeft, m_motorsRight, 3.25, 12.25, 8, inches, gearRatioSimple( 36, 60 ) );
+    drivetrain m_drivetrain = drivetrain( m_motorsLeft, m_motorsRight, 3.25, 12.25, 8, inches, 15 );
 
     //bool disableUse = false;
 
@@ -85,7 +92,7 @@ class fc_intake
 class fc_output
 {
     private:
-    motor m_outputMotor = motor( PORT9, gearSetting::ratio36_1, false );
+    motor m_outputMotor = motor( PORT9, gearSetting::ratio36_1, true );
 
     //bool disableUse = false;
 

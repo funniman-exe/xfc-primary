@@ -31,7 +31,7 @@ void fc_user()
 		//g_brain.Screen.clearScreen();
 		fc_updateControl();
 
-		fc_updatePos();
+		//fc_updatePos();
 
 		g_brain.Screen.clearScreen();
 		g_brain.Screen.setCursor( 1, 1 );

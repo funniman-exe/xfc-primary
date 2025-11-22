@@ -62,7 +62,7 @@ void fc_updatePos()
     encoder_total_mm = ( encoderX_change_dist + encoderY_change_dist ) / 2.0;
 
     // adjust heading
-    heading = m_inertial.angle();
+    heading = m_inertial.heading();
     //heading += ( encoderY_change - encoderX_change ) / 9.2345;
 
     if ( heading > 180 )

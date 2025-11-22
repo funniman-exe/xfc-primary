@@ -4,7 +4,7 @@
 		"json": 2
 	},
 	"project": {
-		"name": "XFC Primary",
+		"name": "XFC Left",
 		"description": "The XFC competition software. Designed for use with V5RC based competitions.",
 		"creationDate": "10/1/2025, 2:42:07 PM",
 		"platform": "V5",
