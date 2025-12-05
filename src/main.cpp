@@ -92,73 +92,55 @@ void disabled()
 	pros::delay( 625 );
 }
 
-int local_fieldSide = xfc::globals::fieldSide::LEFT;
-int local_matchType = xfc::globals::matchType::NORMAL;
-
 void llemu_switch_matchtype()
 {
-	if ( xfc::globals::g_llemu_options_lockedin )
-		return;
+	//if ( xfc::globals::g_llemu_options_lockedin )
+	//	return;
 
-	if ( ++local_matchType > xfc::globals::matchType::SKILLS )
-		local_matchType == xfc::globals::matchType::NORMAL;
-	
-	std::string matchType = "Match type: ";
-		
-	switch ( xfc::globals::g_iMatchType )
-	{
-	case xfc::globals::matchType::NORMAL:
+	xfc::globals::g_bIsSkillsMatch = !xfc::globals::g_bIsSkillsMatch;
+
+	std::string matchType = "Match Type: ";
+
+	if ( !xfc::globals::g_bIsSkillsMatch )
 		matchType += "NORMAL";
-		break;
-	
-	case xfc::globals::matchType::SKILLS:
+	else
 		matchType += "SKILLS";
-		break;
-	
-	default:
-		break;
-	}
 
 	pros::lcd::set_text( 4, matchType );
 	printf( matchType.c_str() );
 }
 
-void llemu_lockin_selections()
+void llemu_switch_auton()
 {
-	if ( xfc::globals::g_llemu_options_lockedin )
-		return;
+	//if ( xfc::globals::g_llemu_options_lockedin )
+	//	return;
 
-	xfc::globals::g_llemu_options_lockedin = true;
-	xfc::globals::g_iFieldSide = local_fieldSide;
-	xfc::globals::g_iMatchType = local_matchType;
+	xfc::globals::g_bAutonEnabled = !xfc::globals::g_bAutonEnabled;
+	
+	std::string autonStatus = "Auton Status: ";
+		
+	if ( xfc::globals::g_bAutonEnabled )
+		autonStatus += "ENABLED";
+	else
+		autonStatus += "DUMMY";
 
-	pros::lcd::set_text( 5, "OPTIONS LOCKED IN -- READY" );
-	printf( "READY!!!" );
+	pros::lcd::set_text( 5, autonStatus );
+	printf( autonStatus.c_str() );
 }
 
 void llemu_switch_side()
 {
-	if ( xfc::globals::g_llemu_options_lockedin )
-		return;
+	//if ( xfc::globals::g_llemu_options_lockedin )
+	//	return;
 
-	if ( ++local_fieldSide > xfc::globals::fieldSide::RIGHT )
-		local_fieldSide == xfc::globals::fieldSide::LEFT;
+	xfc::globals::g_bIsOnLeft = !xfc::globals::g_bIsOnLeft;
 
-	std::string sideOfField = "Side of field: ";
+	std::string sideOfField = "Side of Field: ";
 		
-	switch ( xfc::globals::g_iFieldSide )
-	{
-	case xfc::globals::fieldSide::LEFT:
+	if ( xfc::globals::g_bIsOnLeft )
 		sideOfField += "LEFT";
-		break;
-	
-	case xfc::globals::fieldSide::RIGHT:
+	else
 		sideOfField += "RIGHT";
-		break;
-	
-	default:
-		break;
-	}
 
 	pros::lcd::set_text( 3, sideOfField );
 	printf( sideOfField.c_str() );
@@ -175,13 +157,42 @@ void llemu_switch_side()
  */
 void competition_initialize()
 {
-	pros::lcd::register_btn0_cb( llemu_switch_matchtype );
-	pros::lcd::register_btn1_cb( llemu_lockin_selections );
-	pros::lcd::register_btn2_cb( llemu_switch_side );
+	pros::lcd::register_btn0_cb( llemu_switch_side );
+	pros::lcd::register_btn1_cb( llemu_switch_auton );
+	pros::lcd::register_btn2_cb( llemu_switch_matchtype );
 
 	pros::lcd::set_text( 3, "Side of Field: LEFT" );
-	pros::lcd::set_text( 4, "Match type: NORMAL" );
-	while ( !xfc::globals::g_llemu_options_lockedin ) { pros::delay( 20 ); }
+	pros::lcd::set_text( 4, "Match Type: NORMAL" );
+	pros::lcd::set_text( 5, "Auton Status: ENABLED" );
+}
+
+void auton_dummy()
+{
+	xfc::globals::g_mgLeft.move( 64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( 250 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	while ( true ) { pros::delay( 20 ); }
+}
+
+void auton_skills()
+{
+
+	while ( true ) { pros::delay( 20 ); }
+}
+
+void auton_left()
+{
+
+	while ( true ) { pros::delay( 20 ); }
+}
+
+void auton_right()
+{
+
+	while ( true ) { pros::delay( 20 ); }
 }
 
 /**
@@ -197,5 +208,19 @@ void competition_initialize()
  */
 void autonomous()
 {
-
+	if ( !xfc::globals::g_bAutonEnabled )
+	{
+		auton_dummy();
+	}
+	else if ( xfc::globals::g_bIsSkillsMatch )
+	{
+		auton_skills();
+	}
+	else
+	{
+		if ( xfc::globals::g_bIsOnLeft )
+			auton_left();
+		else
+			auton_right();
+	}
 }

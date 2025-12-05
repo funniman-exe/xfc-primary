@@ -9,10 +9,11 @@ namespace xfc
         //lv_obj_t *scr = nullptr;
         //lv_obj_t *win = nullptr;
 
-        int g_iMatchType = matchType::NORMAL;
-        int g_iFieldSide = fieldSide::LEFT;
+        int g_bIsSkillsMatch = false;
+        int g_bIsOnLeft = true;
+        bool g_bAutonEnabled = true;
 
-        bool g_llemu_options_lockedin = false;
+        //bool g_llemu_options_lockedin = false;
 
         // Controllers
         pros::Controller *g_cMaster = nullptr;

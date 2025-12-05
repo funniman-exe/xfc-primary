@@ -21,10 +21,9 @@ namespace xfc
 
 	void fc_awaitAutopark()
 	{
-		if ( globals::g_iMatchType == globals::matchType::NORMAL )
+		if ( !xfc::globals::g_bIsSkillsMatch )
 			pros::delay( 95000 ); // 95 Seconds
-		
-		if ( globals::g_iMatchType == globals::matchType::SKILLS )
+		else
 			pros::delay( 50000 ); // 50 Seconds
 		
 		autoparkEnabled = true;
