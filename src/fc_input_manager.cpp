@@ -1,9 +1,5 @@
 #include "main.h"
 
-#include "string.h"
-
-#include "fc_globls.h"
-
 namespace xfc
 {
 	int32_t prevDir = 0;

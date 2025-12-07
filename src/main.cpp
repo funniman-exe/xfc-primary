@@ -104,7 +104,10 @@ void llemu_switch_matchtype()
 	if ( !xfc::globals::g_bIsSkillsMatch )
 		matchType += "NORMAL";
 	else
+	{
 		matchType += "SKILLS";
+		pros::lcd::clear_line( 3 );
+	}
 
 	pros::lcd::set_text( 4, matchType );
 	printf( matchType.c_str() );
@@ -132,6 +135,9 @@ void llemu_switch_side()
 {
 	//if ( xfc::globals::g_llemu_options_lockedin )
 	//	return;
+
+	if ( xfc::globals::g_bIsSkillsMatch )
+		return;
 
 	xfc::globals::g_bIsOnLeft = !xfc::globals::g_bIsOnLeft;
 
@@ -166,6 +172,8 @@ void competition_initialize()
 	pros::lcd::set_text( 5, "Auton Status: ENABLED" );
 }
 
+#define turnTime90 425
+
 void auton_dummy()
 {
 	xfc::globals::g_mgLeft.move( 64 );
@@ -179,18 +187,317 @@ void auton_dummy()
 
 void auton_skills()
 {
+	xfc::globals::g_mgLeft.move( 64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( 1110 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( turnTime90 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_pMatchload.set_value( 1 );
+	xfc::globals::g_mgGantry.move( 127 );
+
+	pros::delay( 500 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 600 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+	
+	xfc::globals::g_mgGantry.brake();
+	xfc::globals::g_pMatchload.set_value( 0 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 1000 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_mgGantry.move( 127 );
+	xfc::globals::g_mgOutput.move( 127 );
+
+	pros::delay( 6000 );
+
+	xfc::globals::g_mgGantry.brake();
+	xfc::globals::g_mgOutput.brake();
+
+	xfc::globals::g_mgLeft.move( 64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( 100 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( turnTime90 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_mgLeft.move( 64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( 1250 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
 
 	while ( true ) { pros::delay( 20 ); }
 }
 
 void auton_left()
 {
+	xfc::globals::g_mgLeft.move( 64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( 1110 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( turnTime90 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_pMatchload.set_value( 1 );
+	xfc::globals::g_mgGantry.move( 127 );
+
+	pros::delay( 500 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 600 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+	
+	xfc::globals::g_mgGantry.brake();
+	xfc::globals::g_pMatchload.set_value( 0 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 1000 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_mgGantry.move( 127 );
+	xfc::globals::g_mgOutput.move( 127 );
 
 	while ( true ) { pros::delay( 20 ); }
 }
 
 void auton_right()
 {
+	xfc::globals::g_mgLeft.move( 64 );
+	xfc::globals::g_mgRight.move( 64 );
+	pros::delay( 1110 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_mgLeft.move( 64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( turnTime90 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_pMatchload.set_value( 1 );
+	xfc::globals::g_mgGantry.move( 127 );
+
+	pros::delay( 500 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 600 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 125 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 50 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 300 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+	
+	xfc::globals::g_mgGantry.brake();
+	xfc::globals::g_pMatchload.set_value( 0 );
+
+	xfc::globals::g_mgLeft.move( -64 );
+	xfc::globals::g_mgRight.move( -64 );
+	pros::delay( 1000 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	pros::delay( 250 );
+
+	xfc::globals::g_mgGantry.move( 127 );
+	xfc::globals::g_mgOutput.move( 127 );
 
 	while ( true ) { pros::delay( 20 ); }
 }

@@ -3,10 +3,7 @@
     {
       "name": "XFC Primary",
       "includePath": [
-        "${workspaceFolder}/**",
-        "c:\\Users\\oscar\\OneDrive\\Desktop\\docs\\RoboticsComp\\xfc-primary-pros\\xfc-primary\\include",
-        "c:\\Users\\oscar\\OneDrive\\Desktop\\docs\\RoboticsComp\\xfc-primary-pros\\xfc-primary\\include\\liblvgl",
-        "/mnt/modding-n-stuff-external/Coding/vex/xfc-primary/include"
+        "${workspaceFolder}/**"
       ],
       "defines": [
         "_DEBUG",
