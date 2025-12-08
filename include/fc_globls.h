@@ -11,22 +11,11 @@ namespace xfc
         //extern lv_obj_t *scr; // LVGL Screen
         //extern lv_obj_t *win; // LVGL Window
 
-        enum fieldSide
-        {
-            LEFT,
-            RIGHT
-        };
+        extern int g_bIsSkillsMatch;
+        extern int g_bIsOnLeft;
+        extern bool g_bAutonEnabled;
 
-        enum matchType
-        {
-            NORMAL,
-            SKILLS
-        };
-
-        extern int g_iMatchType;
-        extern int g_iFieldSide;
-
-        extern bool g_llemu_options_lockedin;
+        //extern bool g_llemu_options_lockedin;
 
         // Controllers
         extern pros::Controller *g_cMaster; // Master Controller

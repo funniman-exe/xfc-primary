@@ -3,22 +3,20 @@
     {
       "name": "XFC Primary",
       "includePath": [
-        "${workspaceFolder}/**",
-        "c:\\Users\\oscar\\OneDrive\\Desktop\\docs\\RoboticsComp\\xfc-primary-pros\\xfc-primary\\include",
-        "c:\\Users\\oscar\\OneDrive\\Desktop\\docs\\RoboticsComp\\xfc-primary-pros\\xfc-primary\\include\\liblvgl"
+        "${workspaceFolder}/**"
       ],
       "defines": [
         "_DEBUG",
         "UNICODE",
         "_UNICODE"
       ],
-      "compilerPath": "c:\\Users\\oscar\\AppData\\Roaming\\Code\\User\\globalStorage\\sigbots.pros\\install\\pros-toolchain-windows\\usr\\bin\\arm-none-eabi-g++",
+      "compilerPath": "/home/funniman.exe/.config/Code/User/globalStorage/sigbots.pros/install/pros-toolchain-linux/bin/arm-none-eabi-g++",
       "cStandard": "gnu11",
       "cppStandard": "gnu++20",
       "intelliSenseMode": "gcc-arm",
       "browse": {
         "path": [
-          "c:\\Users\\oscar\\OneDrive\\Desktop\\docs\\RoboticsComp\\xfc-primary-pros\\xfc-primary"
+          "/mnt/modding-n-stuff-external/Coding/vex/xfc-primary"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""
