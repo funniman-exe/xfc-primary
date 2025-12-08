@@ -9,15 +9,17 @@ namespace xfc
 	int32_t prevDir = 0;
 	int32_t prevTurn = 0;
 
-	bool prevMatchload = false;
-	bool prevDeload = false;
-	bool prevParking = false;
+	bool prevMatchload = false;	// prev matchload status
+	bool prevDeload = false; // prev deload status
+	bool prevParking = false; // prev parking status
 
-	bool matchloadStatus = false;
-	bool deloadStatus = false;
-	bool parkingStatus = false;
+	bool matchloadStatus = false; // current matchload status
+	bool deloadStatus = false; // current deload status
+	bool parkingStatus = false; // current parking status
 
-	bool autoparkEnabled = false;
+	bool parkingPressed = false; // are both parking switches pressed?
+
+	bool autoparkEnabled = false; // is autopark enabled?
 
 	void fc_awaitAutopark()
 	{
@@ -145,12 +147,23 @@ namespace xfc
 			prevParking = currParking;
 		}
 
+		// purpose of parkingPressed:
+		// to track when both parking switches are pressed so that
+		// if autopark is manually overridden it doesn't immediately retrigger
+
 		if ( globals::g_sParkingSwitchA.get_value()
 			&& globals::g_sParkingSwitchB.get_value()
-			&& autoparkEnabled )
+			&& autoparkEnabled && !parkingPressed )
 		{
+			parkingPressed = true;
 			parkingStatus = true;
 			globals::g_pParking.set_value( parkingStatus );
+		}
+
+		if ( !globals::g_sParkingSwitchA.get_value()
+			|| !globals::g_sParkingSwitchB.get_value() )
+		{
+			parkingPressed = false;			
 		}
 	}
 
