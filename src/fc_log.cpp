@@ -59,57 +59,6 @@ namespace xfc {
 
     // #define DEBUG_LOG
 
-    const char* g_hexChars = "0123456789ABCDEF";
-
-    const char* __fc_log_parse_unsigned( unsigned long long number, int radix )
-    {
-        char buffer[ 32 ];
-        std::string output;
-        output.clear();
-        int pos = 0;
-
-        do
-        {
-            unsigned long long rem = number % radix;
-            number /= radix;
-            buffer[ pos++ ] = g_hexChars[ rem ];
-        } while ( number > 0 );
-
-        // number is flipped after conversion, so we need another buffer to flip it back
-        while ( --pos >= 0 )
-            output += buffer[ pos ];
-
-        return output.c_str();
-    }
-
-    void __fc_log_parse_unsigned_passthru( std::string str, bool sendToBrain, bool sendToController, unsigned long long number, int radix )
-    {
-        str += __fc_log_parse_unsigned( number, radix );
-    }
-
-    void __fc_log_parse_signed( std::string str, bool sendToBrain, bool sendToController, long long number, int radix )
-    {
-        if ( number < 0 )
-        {
-            str += "-";
-            str += __fc_log_parse_unsigned( -number, radix );
-        }
-        else
-            str += __fc_log_parse_unsigned( number, radix );
-    }
-
-    #define PARSER_STATE_NORMAL 0
-    #define PARSER_STATE_LENGTH 1
-    #define PARSER_STATE_LENGTH_SHORT 2
-    #define PARSER_STATE_LENGTH_LONG 3
-    #define PARSER_STATE_SPEC 4
-
-    #define PARSER_LENGTH_DEFAULT 0
-    #define PARSER_LENGTH_SHORT 1
-    #define PARSER_LENGTH_SHORT_SHORT 2
-    #define PARSER_LENGTH_LONG 3
-    #define PARSER_LENGTH_LONG_LONG 4
-
     void fc_log_init()
     {
         fc_logProperties::m_iCurrLine = 0;
@@ -150,11 +99,11 @@ namespace xfc {
 
     void __fc_log_print( const char *str, bool sendToBrain, bool sendToController )
     {
-        printf( str );
+        std::cout << str;
         if ( sendToBrain )
         {
             brainLogConsole[ fc_logProperties::m_iCurrLine ] += str;
-            pros::lcd::print( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ].c_str() );
+            pros::lcd::set_text( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ] );
             //pros::screen::print( fc_logProperties::m_iTextFmt, fc_logProperties::m_iCurrLine, str );
             //brainLogConsole += str;
             //lv_label_set_text( text, brainLogConsole.c_str() );
@@ -172,231 +121,76 @@ namespace xfc {
         //fc_logProperties::m_iColChanged = 0;
     }
 
-    void __fc_log_parse( bool isFatal, bool sendToBrain, bool sendToController, const char* fmt, va_list args )
+    void __fc_log_process( bool isFatal, bool sendToBrain, bool sendToController, const char* fmt )
     {
-        int state = PARSER_STATE_NORMAL;
-        int length = PARSER_LENGTH_DEFAULT;
-        int radix = 10;
-        bool sign = false;
-        bool number = false;
-
         std::string tmp;
-        fc_logProperties::m_iColChanged = 0;
+        tmp.clear();
 
         while ( *fmt )
         {
-            switch( state )
-            {
-                case PARSER_STATE_NORMAL:
-                    switch ( *fmt )
+            switch ( *fmt )
+            {   
+                case '\n':
+                    __fc_log_print( tmp.c_str(), sendToBrain, sendToController );
+                    tmp.clear();
+
+                    if ( sendToBrain )
                     {
-                        case '%':
-                            state = PARSER_STATE_LENGTH;
-                            break;
-                        
-                        case '\n':
-                            __fc_log_print( tmp.c_str(), sendToBrain, sendToController );
-                            tmp.clear();
+                        ++fc_logProperties::m_iCurrLine;
+                        //brainLogConsole += "\n";
 
-                            if ( sendToBrain )
-                            {
-                                ++fc_logProperties::m_iCurrLine;
-                                //brainLogConsole += "\n";
-
-                                if ( fc_logProperties::m_iCurrLine >= brainMaxLines )
-                                {
-                                    for ( int i = 0; i < brainMaxLines - 1; i++ )
-                                    {
-                                        brainLogConsole[ i ] = brainLogConsole[ i + 1 ];
-                                    }
-
-                                    brainLogConsole[ brainMaxLines - 1 ] = "";
-                                }
-                            }
-                            if ( sendToController )
-                            {
-                                ++fc_logProperties::m_iCurrControllerLine;
-
-                                if ( fc_logProperties::m_iCurrControllerLine >= controllerMaxLines )
-                                {
-                                    for ( int i = 0; i < controllerMaxLines - 1; i++ )
-                                    {
-                                        controllerLogConsole[ i ] = controllerLogConsole[ i + 1 ];
-                                    }
-
-                                    controllerLogConsole[ controllerMaxLines - 1 ] = "";
-                                }
-                            }
-                            printf( "\n" );
-                            break;
-
-                        default:
-                            tmp += *fmt;
-                            break;
-                    }
-                    break;
-                
-                case PARSER_STATE_LENGTH:
-                    switch( *fmt )
-                    {
-                        case 'h':
-                            length = PARSER_LENGTH_SHORT;
-                            state = PARSER_STATE_LENGTH_SHORT;
-                            break;
-
-                        case 'l':
-                            length = PARSER_LENGTH_LONG;
-                            state = PARSER_STATE_LENGTH_LONG;
-                            break;
-
-                        default:
-                            goto _PARSER_STATE_SPEC;
-                    }
-                    break;
-
-                case PARSER_STATE_LENGTH_SHORT:
-                    if ( *fmt == 'h' )
-                    {
-                        length = PARSER_LENGTH_SHORT_SHORT;
-                        state = PARSER_STATE_SPEC;
-                    }
-                    else goto _PARSER_STATE_SPEC;
-                    break;
-
-                case PARSER_STATE_LENGTH_LONG:
-                    if ( *fmt == 'l' )
-                    {
-                        length = PARSER_LENGTH_LONG_LONG;
-                        state = PARSER_STATE_SPEC;
-                    }
-                    else goto _PARSER_STATE_SPEC;
-                    break;
-
-                _PARSER_STATE_SPEC:
-                case PARSER_STATE_SPEC:
-                    switch( *fmt )
-                    {
-                        case 'c':
-                            tmp += ( char )va_arg( args, int );
-                            break;
-
-                        case 's':
-                            tmp += va_arg( args, const char* );
-                            break;
-
-                        case '%':
-                            tmp += '%';
-                            break;
-
-                        case 'd':
-                        case 'i':
-                            radix = 10;
-                            sign = true;
-                            number = true;
-                            break;
-
-                        case 'u':
-                            radix = 10;
-                            sign = false;
-                            number = true;
-                            break;
-
-                        case 'x':
-                        case 'p':
-                            radix = 16;
-                            sign = false;
-                            number = true;
-                            break;
-
-                        case 'o':
-                            radix = 8;
-                            sign = false;
-                            number = true;
-                            break;
-
-                        case 'f':
-                            if ( sendToBrain )
-                            {
-                                __fc_log_print( tmp.c_str(), sendToBrain, sendToController );
-                                tmp.clear();
-                                pros::screen::set_pen( va_arg( args, uint32_t ) );
-                            }
-                            break;
-
-                        case 'b':
-                            if ( sendToBrain )
-                            {
-                                __fc_log_print( tmp.c_str(), sendToBrain, sendToController );
-                                tmp.clear();
-                                pros::screen::set_eraser( va_arg( args, uint32_t ) );
-                            }
-                            break;
-
-                        default: break;
-                    }
-
-                    if ( number )
-                    {
-                        if ( sign )
+                        if ( fc_logProperties::m_iCurrLine >= brainMaxLines )
                         {
-                            switch ( length )
+                            for ( int i = 0; i < brainMaxLines - 1; i++ )
                             {
-                                case PARSER_LENGTH_SHORT_SHORT:
-                                case PARSER_LENGTH_SHORT:
-                                case PARSER_LENGTH_DEFAULT:
-                                    __fc_log_parse_signed( tmp, sendToBrain, sendToController, va_arg( args, int ), radix );
-                                    break;
-
-                                case PARSER_LENGTH_LONG:
-                                    __fc_log_parse_signed( tmp, sendToBrain, sendToController, va_arg( args, long ), radix );
-                                    break;
-
-                                case PARSER_LENGTH_LONG_LONG:
-                                    __fc_log_parse_signed( tmp, sendToBrain, sendToController, va_arg( args, long long ), radix );
-                                    break;
-
-                                default: break;
+                                brainLogConsole[ i ] = brainLogConsole[ i + 1 ];
                             }
-                        }
-                        else
-                        {
-                            switch ( length )
-                            {
-                                case PARSER_LENGTH_SHORT_SHORT:
-                                case PARSER_LENGTH_SHORT:
-                                case PARSER_LENGTH_DEFAULT:
-                                    __fc_log_parse_unsigned_passthru( tmp, sendToBrain, sendToController, va_arg( args, unsigned int ), radix );
-                                    break;
 
-                                case PARSER_LENGTH_LONG:
-                                    __fc_log_parse_unsigned_passthru( tmp, sendToBrain, sendToController, va_arg( args, unsigned long ), radix );
-                                    break;
-
-                                case PARSER_LENGTH_LONG_LONG:
-                                    __fc_log_parse_unsigned_passthru( tmp, sendToBrain, sendToController, va_arg( args, unsigned long long ), radix );
-                                    break;
-
-                                default: break;
-                            }
+                            brainLogConsole[ brainMaxLines - 1 ] = "";
                         }
                     }
 
-                    state = PARSER_STATE_NORMAL;
-                    length = PARSER_LENGTH_DEFAULT;
-                    radix = 10;
-                    sign = false;
-                    number = false;
+                    if ( sendToController )
+                    {
+                        ++fc_logProperties::m_iCurrControllerLine;
+
+                        if ( fc_logProperties::m_iCurrControllerLine >= controllerMaxLines )
+                        {
+                            for ( int i = 0; i < controllerMaxLines - 1; i++ )
+                            {
+                                controllerLogConsole[ i ] = controllerLogConsole[ i + 1 ];
+                            }
+
+                            controllerLogConsole[ controllerMaxLines - 1 ] = "";
+                        }
+                    }
+
+                    std::cout << std::endl;
                     break;
 
-                default: break;
+                default:
+                    tmp += *fmt;
+                    break;
             }
-
+            
             ++fc_logProperties::m_iColChanged;
             ++fmt;
         }
 
         __fc_log_print( tmp.c_str(), sendToBrain, sendToController );
         tmp.clear();
+    }
+
+    /// @brief wrapper for vsprintf
+    /// @param fmt format string
+    /// @param va variable argument list
+    /// @returns heap allocated char* containing the formatted string
+    char* vsprintf_wrapper( const char* fmt, va_list va )
+    {
+        // kinda horrible, but i'm not sure if there's a better way
+        char* ret = new char[ sizeof( fmt ) + 256 ];
+        vsprintf( ret, fmt, va );
+        return ret;
     }
 
     void fc_log( uint8_t type, bool sendToController, bool usePrefix, const char* loc, const char* fmt, ... )
@@ -444,7 +238,7 @@ namespace xfc {
         //if ( sendToBrain )
         //    pros::screen::set_pen( col );
 
-        printf( printCol );
+        std::cout << printCol;
 
         if ( usePrefix && type != logTypes::FATAL )
         {
@@ -477,7 +271,7 @@ namespace xfc {
                 //lv_label_set_text( text, brainLogConsole.c_str() );
             }
             
-            printf( prefix.c_str() );
+            std::cout << prefix.c_str();
 
             prefix.clear();
         }
@@ -505,13 +299,14 @@ namespace xfc {
             //brainLogConsole += "\n\nDetails: ";
             //lv_label_set_text_static( text, brainLogConsole.c_str() );
             fc_logProperties::m_iCurrLine = 6;
-            printf( "%sFATAL ERROR @ \"%s\"!\nDetails: ", printCol, loc );
+            std::cout << "FATAL ERROR @ \"" << loc << "\"!\nDetails: ";
         }
 
         va_list args;
         va_start( args, fmt );
 
-        __fc_log_parse( ( type == logTypes::FATAL ), sendToBrain, sendToController, fmt, args );
+        //__fc_log_parse( ( type == logTypes::FATAL ), sendToBrain, sendToController, fmt, args );
+        __fc_log_process( ( type == logTypes::FATAL ), sendToBrain, sendToController, vsprintf_wrapper( fmt, args ) );
 
         va_end( args );
 
@@ -527,6 +322,6 @@ namespace xfc {
         //if ( sendToBrain )
         //    pros::screen::set_pen( pros::Color::white );
 
-        printf( "\033[37m" );
+        std::cout << "\033[37m";
     }
 }
