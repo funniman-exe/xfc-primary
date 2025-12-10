@@ -211,7 +211,7 @@ namespace xfc
  */
 void opcontrol()
 {
-	pros::Task autopark( xfc::fc_awaitAutopark );
+	if ( xfc::globals::g_bIsCompetitionMatch ) pros::Task autopark( xfc::fc_awaitAutopark );
 
 	while ( true )
 	{

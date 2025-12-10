@@ -13,6 +13,8 @@ namespace xfc
         int g_bIsOnLeft = true;
         bool g_bAutonEnabled = true;
 
+        bool g_bIsCompetitionMatch = false;
+
         //bool g_llemu_options_lockedin = false;
 
         // Controllers

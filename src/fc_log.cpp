@@ -53,9 +53,11 @@ namespace xfc {
     #define brainMaxLines 8
     #define controllerMaxLines 3
 
+    std::string brainConsole;
+
     std::string brainLogConsole[ brainMaxLines ];
     std::string controllerLogConsole[ controllerMaxLines ];
-    //lv_obj_t *text = nullptr;
+    lv_obj_t *text = nullptr;
 
     // #define DEBUG_LOG
 
@@ -69,7 +71,7 @@ namespace xfc {
         fc_logProperties::m_iTextFmt = pros::text_format_e_t::E_TEXT_MEDIUM;
 
         //pros::screen::erase();
-        pros::lcd::clear();
+        //pros::lcd::clear();
 
         for ( int i = 0; i < brainMaxLines; i++ )
         {
@@ -81,10 +83,10 @@ namespace xfc {
             controllerLogConsole[ i ] = "";
         }
 
-        //text = lv_label_create( lv_screen_active() );
-        //lv_label_set_long_mode( text, LV_LABEL_LONG_WRAP );
-        //lv_obj_set_size( text, 480, 240 );
-        //lv_label_set_text( text, brainLogConsole.c_str() );
+        text = lv_label_create( lv_screen_active() );
+        lv_label_set_long_mode( text, LV_LABEL_LONG_WRAP );
+        lv_obj_set_size( text, 480, 240 );
+        lv_label_set_text( text, "" );
     }
 
     void fc_log_deinit()
@@ -97,16 +99,26 @@ namespace xfc {
         fc_logProperties::m_iTextFmt = pros::text_format_e_t::E_TEXT_MEDIUM;
     }
 
-    void __fc_log_print( const char *str, bool sendToBrain, bool sendToController )
+    void __fc_log_print( const char *str, bool sendToBrain, bool sendToController, bool isFatal )
     {
         std::cout << str;
         if ( sendToBrain )
         {
+            if ( isFatal ) brainLogConsole[ fc_logProperties::m_iCurrLine ] += "    ";
             brainLogConsole[ fc_logProperties::m_iCurrLine ] += str;
-            pros::lcd::set_text( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ] );
+
+            brainConsole.clear();
+            for ( int i = 0; i < brainMaxLines; i++ )
+            {
+                brainConsole += brainLogConsole[ i ];
+            }
+
+            //std::cout << "DBG: printing string \"" << brainLogConsole[ fc_logProperties::m_iCurrLine ] << "\" to brain screen on line" << fc_logProperties::m_iCurrLine << ";;;;;";
+
+            //pros::lcd::set_text( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ] );
             //pros::screen::print( fc_logProperties::m_iTextFmt, fc_logProperties::m_iCurrLine, str );
             //brainLogConsole += str;
-            //lv_label_set_text( text, brainLogConsole.c_str() );
+            lv_label_set_text( text, brainConsole.c_str() );
             //fc_logProperties::m_iCurrCol += fc_logProperties::m_iColChanged;
         }
         if ( sendToController )
@@ -131,15 +143,15 @@ namespace xfc {
             switch ( *fmt )
             {   
                 case '\n':
-                    __fc_log_print( tmp.c_str(), sendToBrain, sendToController );
-                    tmp.clear();
+                    if ( !tmp.empty() )
+                    {
+                        __fc_log_print( tmp.c_str(), sendToBrain, sendToController, isFatal );
+                        tmp.clear();
+                    }
 
                     if ( sendToBrain )
                     {
-                        ++fc_logProperties::m_iCurrLine;
-                        //brainLogConsole += "\n";
-
-                        if ( fc_logProperties::m_iCurrLine >= brainMaxLines )
+                        if ( ++fc_logProperties::m_iCurrLine >= brainMaxLines )
                         {
                             for ( int i = 0; i < brainMaxLines - 1; i++ )
                             {
@@ -147,14 +159,20 @@ namespace xfc {
                             }
 
                             brainLogConsole[ brainMaxLines - 1 ] = "";
+
+                            brainConsole.clear();
+                            for ( int i = 0; i < brainMaxLines; i++ )
+                            {
+                                brainConsole += brainLogConsole[ i ];
+                            }
+
+                            lv_label_set_text( text, brainConsole.c_str() );
                         }
                     }
 
                     if ( sendToController )
                     {
-                        ++fc_logProperties::m_iCurrControllerLine;
-
-                        if ( fc_logProperties::m_iCurrControllerLine >= controllerMaxLines )
+                        if ( ++fc_logProperties::m_iCurrControllerLine >= controllerMaxLines )
                         {
                             for ( int i = 0; i < controllerMaxLines - 1; i++ )
                             {
@@ -177,20 +195,39 @@ namespace xfc {
             ++fmt;
         }
 
-        __fc_log_print( tmp.c_str(), sendToBrain, sendToController );
-        tmp.clear();
+        if ( !tmp.empty() ) __fc_log_print( tmp.c_str(), sendToBrain, sendToController, isFatal );
+        if ( !tmp.empty() ) tmp.clear();
     }
 
     /// @brief wrapper for vsprintf
     /// @param fmt format string
     /// @param va variable argument list
-    /// @returns heap allocated char* containing the formatted string
+    /// @returns const char* containing the formatted string
     char* vsprintf_wrapper( const char* fmt, va_list va )
     {
         // kinda horrible, but i'm not sure if there's a better way
-        char* ret = new char[ sizeof( fmt ) + 256 ];
-        vsprintf( ret, fmt, va );
-        return ret;
+        char* tmp = new char[ sizeof( fmt ) + 256 ];
+        vsprintf( tmp, fmt, va );
+
+        return tmp;
+    }
+
+    /// @brief A wrapper for sprintf
+    /// @param fmt Format String
+    /// @param ... Variable Arguments
+    /// @returns const char* containing the formatted string
+    char* cFmt( const char* fmt, ... )
+    {
+        va_list args;
+        va_start( args, fmt );
+
+        // kinda horrible, but i'm not sure if there's a better way
+        char* tmp = new char[ sizeof( fmt ) + 256 ];
+        vsprintf( tmp, fmt, args );
+
+        va_end( args );
+
+        return tmp;
     }
 
     void fc_log( uint8_t type, bool sendToController, bool usePrefix, const char* loc, const char* fmt, ... )
@@ -260,7 +297,7 @@ namespace xfc {
             {
                 brainLogConsole[ fc_logProperties::m_iCurrLine ] += prefix;
 
-                pros::lcd::set_text( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ] );
+                //pros::lcd::set_text( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ] );
                 //pros::screen::print( fc_logProperties::m_iTextFmt, fc_logProperties::m_iCurrLine, "<%s - %s>: ", logTypeNames[type], loc );
                 //lv_label_set_text_fmt( text, "<%s - %s>: ", logTypeNames[type], loc );
                 //brainLogConsole += "<";
@@ -268,7 +305,14 @@ namespace xfc {
                 //brainLogConsole += " - ";
                 //brainLogConsole += loc;
                 //brainLogConsole += ">: ";
-                //lv_label_set_text( text, brainLogConsole.c_str() );
+
+                brainConsole.clear();
+                for ( int i = 0; i < brainMaxLines; i++ )
+                {
+                    brainConsole += brainLogConsole[ i ];
+                }
+
+                lv_label_set_text( text, brainConsole.c_str() );
             }
             
             std::cout << prefix.c_str();
@@ -283,9 +327,28 @@ namespace xfc {
             //pros::screen::erase();
             //pros::screen::set_pen( pros::Color::white );
 
-            pros::lcd::set_text( 0, "X(" );
-            pros::lcd::set_text( 2, "FATAL ERROR!" );
-            pros::lcd::print( 4, "Loc: %s", loc );
+            //pros::lcd::set_text( 0, "X(" );
+            //pros::lcd::set_text( 2, "FATAL ERROR!" );
+            //pros::lcd::print( 4, "Loc: %s", loc );
+
+            brainLogConsole[ 0 ] = "X(";
+            brainLogConsole[ 1 ] = "";
+            brainLogConsole[ 2 ] = "FATAL ERROR @ ";
+            brainLogConsole[ 2 ] += loc;
+            brainLogConsole[ 3 ] = "";
+            brainLogConsole[ 4 ] = "Details: ";
+            brainLogConsole[ 5 ] = "";
+            brainLogConsole[ 6 ] = "";
+            brainLogConsole[ 7 ] = "";
+
+            brainConsole.clear();
+            for ( int i = 0; i < brainMaxLines; i++ )
+            {
+                brainConsole += brainLogConsole[ i ];
+            }
+
+            lv_label_set_text( text, brainConsole.c_str() );
+
             //pros::lcd::set_text( 6, "Details: " );
             //pros::screen::print( pros::text_format_e_t::E_TEXT_MEDIUM, 0, "X(" );
             //pros::screen::print( pros::text_format_e_t::E_TEXT_MEDIUM, 2, "FATAL ERROR!" );
@@ -298,15 +361,20 @@ namespace xfc {
             //brainLogConsole += loc;
             //brainLogConsole += "\n\nDetails: ";
             //lv_label_set_text_static( text, brainLogConsole.c_str() );
-            fc_logProperties::m_iCurrLine = 6;
+            fc_logProperties::m_iCurrLine = 5;
             std::cout << "FATAL ERROR @ \"" << loc << "\"!\nDetails: ";
         }
 
         va_list args;
         va_start( args, fmt );
 
+        const char* input = vsprintf_wrapper( fmt, args );
+
         //__fc_log_parse( ( type == logTypes::FATAL ), sendToBrain, sendToController, fmt, args );
-        __fc_log_process( ( type == logTypes::FATAL ), sendToBrain, sendToController, vsprintf_wrapper( fmt, args ) );
+        __fc_log_process( ( type == logTypes::FATAL ), sendToBrain, sendToController, input );
+
+        delete[] input;
+        input = nullptr;
 
         va_end( args );
 

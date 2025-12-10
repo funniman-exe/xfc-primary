@@ -11,7 +11,7 @@ namespace xfc
 {
 	void fc_startup()
 	{
-		pros::lcd::clear();
+		//pros::lcd::clear();
 		//pros::screen::erase();
 
 		fc_log( logTypes::Info, false, false, __func__, "Hewwo :3 I am " botname "!!!\n" );
@@ -22,8 +22,7 @@ namespace xfc
 
 		if ( !globals::g_cMaster->is_connected() )
 		{
-			fc_log( logTypes::ERROR, false, true, __func__, "Master controller not detected.\n" );
-			fc_log( logTypes::ERROR, false, false, __func__, "Please sync the Master controller.\n" );
+			fc_log( logTypes::ERROR, false, true, __func__, "Master controller not detected.\nPlease sync the Master controller.\n" );
 		}
 
 		if ( !globals::g_cSlave->is_connected() )
@@ -31,8 +30,7 @@ namespace xfc
 	#ifndef REQUIRE_SLAVE_CONTROLLER
 			fc_log( logTypes::Warning, false, true, __func__, "Slave controller not detected.\n" );
 	#else
-			fc_log( logTypes::ERROR, false, true, __func__, "Slave controller not detected.\n" );
-			fc_log( logTypes::ERROR, false, false, __func__, "Please sync the Slave controller.\n" );
+			fc_log( logTypes::ERROR, false, true, __func__, "Slave controller not detected.\nPlease sync the Slave controller.\n" );
 	#endif
 		}
 	}
@@ -43,6 +41,39 @@ namespace xfc
 		//pros::screen::erase();
 
 		fc_log( logTypes::Info, false, false, __func__, "Thank you for using " libname "\n" );
+	}
+
+	void fc_batteryLoop()
+	{
+		while ( true )
+		{
+			if ( pros::battery::get_capacity() <= 10 )
+				break;
+			
+			pros::delay( 125 );
+		}
+
+		xfc::globals::g_cMaster->clear();
+		xfc::globals::g_cSlave->clear();
+
+		fc_log( logTypes::Info, true, false, __func__, "Brain battery is low!\n" );
+
+		globals::g_cMaster->rumble( "-..-..-" );
+
+		while ( true )
+		{
+			if ( pros::battery::get_capacity() <= 5 )
+				break;
+			
+			pros::delay( 125 );
+		}
+
+		xfc::globals::g_cMaster->clear();
+		xfc::globals::g_cSlave->clear();
+
+		fc_log( logTypes::Info, true, false, __func__, "Brain battery is critically low!\n" );
+
+		globals::g_cMaster->rumble( "-...-...-" );
 	}
 }
 
@@ -87,447 +118,7 @@ void disabled()
 		break;
 	}
 
-	pros::lcd::set_text( xfc::fc_logProperties::m_iCurrLine + 1, loadingText.c_str() );
+	//pros::lcd::set_text( xfc::fc_logProperties::m_iCurrLine + 1, loadingText.c_str() );
 	//pros::screen::print( pros::text_format_e_t::E_TEXT_MEDIUM, xfc::fc_logProperties::m_iCurrLine + 1, loadingText.c_str() );
 	pros::delay( 625 );
-}
-
-void llemu_switch_matchtype()
-{
-	//if ( xfc::globals::g_llemu_options_lockedin )
-	//	return;
-
-	xfc::globals::g_bIsSkillsMatch = !xfc::globals::g_bIsSkillsMatch;
-
-	std::string matchType = "Match Type: ";
-
-	if ( !xfc::globals::g_bIsSkillsMatch )
-		matchType += "NORMAL";
-	else
-	{
-		matchType += "SKILLS";
-		pros::lcd::clear_line( 3 );
-	}
-
-	pros::lcd::set_text( 4, matchType );
-	printf( matchType.c_str() );
-}
-
-void llemu_switch_auton()
-{
-	//if ( xfc::globals::g_llemu_options_lockedin )
-	//	return;
-
-	xfc::globals::g_bAutonEnabled = !xfc::globals::g_bAutonEnabled;
-	
-	std::string autonStatus = "Auton Status: ";
-		
-	if ( xfc::globals::g_bAutonEnabled )
-		autonStatus += "ENABLED";
-	else
-		autonStatus += "DUMMY";
-
-	pros::lcd::set_text( 5, autonStatus );
-	printf( autonStatus.c_str() );
-}
-
-void llemu_switch_side()
-{
-	//if ( xfc::globals::g_llemu_options_lockedin )
-	//	return;
-
-	if ( xfc::globals::g_bIsSkillsMatch )
-		return;
-
-	xfc::globals::g_bIsOnLeft = !xfc::globals::g_bIsOnLeft;
-
-	std::string sideOfField = "Side of Field: ";
-		
-	if ( xfc::globals::g_bIsOnLeft )
-		sideOfField += "LEFT";
-	else
-		sideOfField += "RIGHT";
-
-	pros::lcd::set_text( 3, sideOfField );
-	printf( sideOfField.c_str() );
-}
-
-/**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
-void competition_initialize()
-{
-	pros::lcd::register_btn0_cb( llemu_switch_side );
-	pros::lcd::register_btn1_cb( llemu_switch_auton );
-	pros::lcd::register_btn2_cb( llemu_switch_matchtype );
-
-	pros::lcd::set_text( 3, "Side of Field: LEFT" );
-	pros::lcd::set_text( 4, "Match Type: NORMAL" );
-	pros::lcd::set_text( 5, "Auton Status: ENABLED" );
-}
-
-#define turnTime90 425
-
-void auton_dummy()
-{
-	xfc::globals::g_mgLeft.move( 64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( 250 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	while ( true ) { pros::delay( 20 ); }
-}
-
-void auton_skills()
-{
-	xfc::globals::g_mgLeft.move( 64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( 1110 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( turnTime90 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_pMatchload.set_value( 1 );
-	xfc::globals::g_mgGantry.move( 127 );
-
-	pros::delay( 500 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 600 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-	
-	xfc::globals::g_mgGantry.brake();
-	xfc::globals::g_pMatchload.set_value( 0 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 1000 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_mgGantry.move( 127 );
-	xfc::globals::g_mgOutput.move( 127 );
-
-	pros::delay( 6000 );
-
-	xfc::globals::g_mgGantry.brake();
-	xfc::globals::g_mgOutput.brake();
-
-	xfc::globals::g_mgLeft.move( 64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( 100 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( turnTime90 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_mgLeft.move( 64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( 1250 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	while ( true ) { pros::delay( 20 ); }
-}
-
-void auton_left()
-{
-	xfc::globals::g_mgLeft.move( 64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( 1110 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( turnTime90 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_pMatchload.set_value( 1 );
-	xfc::globals::g_mgGantry.move( 127 );
-
-	pros::delay( 500 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 600 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-	
-	xfc::globals::g_mgGantry.brake();
-	xfc::globals::g_pMatchload.set_value( 0 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 1000 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_mgGantry.move( 127 );
-	xfc::globals::g_mgOutput.move( 127 );
-
-	while ( true ) { pros::delay( 20 ); }
-}
-
-void auton_right()
-{
-	xfc::globals::g_mgLeft.move( 64 );
-	xfc::globals::g_mgRight.move( 64 );
-	pros::delay( 1110 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_mgLeft.move( 64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( turnTime90 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_pMatchload.set_value( 1 );
-	xfc::globals::g_mgGantry.move( 127 );
-
-	pros::delay( 500 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 600 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-	
-	xfc::globals::g_mgGantry.brake();
-	xfc::globals::g_pMatchload.set_value( 0 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 1000 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-
-	xfc::globals::g_mgGantry.move( 127 );
-	xfc::globals::g_mgOutput.move( 127 );
-
-	while ( true ) { pros::delay( 20 ); }
-}
-
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
-void autonomous()
-{
-	if ( !xfc::globals::g_bAutonEnabled )
-	{
-		auton_dummy();
-	}
-	else if ( xfc::globals::g_bIsSkillsMatch )
-	{
-		auton_skills();
-	}
-	else
-	{
-		if ( xfc::globals::g_bIsOnLeft )
-			auton_left();
-		else
-			auton_right();
-	}
 }

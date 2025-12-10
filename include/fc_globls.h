@@ -15,6 +15,8 @@ namespace xfc
         extern int g_bIsOnLeft;
         extern bool g_bAutonEnabled;
 
+        extern bool g_bIsCompetitionMatch;
+
         //extern bool g_llemu_options_lockedin;
 
         // Controllers
