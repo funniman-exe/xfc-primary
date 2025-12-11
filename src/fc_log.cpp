@@ -57,7 +57,10 @@ namespace xfc {
 
     std::string brainLogConsole[ brainMaxLines ];
     std::string controllerLogConsole[ controllerMaxLines ];
+    lv_obj_t *container = nullptr;
     lv_obj_t *text = nullptr;
+
+    char prevCol[ 9 ];
 
     // #define DEBUG_LOG
 
@@ -73,6 +76,8 @@ namespace xfc {
         //pros::screen::erase();
         //pros::lcd::clear();
 
+        strcpy( prevCol, "\0\0\0\0\0\0\0\0" );
+
         for ( int i = 0; i < brainMaxLines; i++ )
         {
             brainLogConsole[ i ] = "";
@@ -83,9 +88,16 @@ namespace xfc {
             controllerLogConsole[ i ] = "";
         }
 
-        text = lv_label_create( lv_screen_active() );
+        container = lv_obj_create( lv_scr_act() );
+        lv_obj_set_size( container, 480, 240 );
+        lv_obj_set_scroll_dir( container, LV_DIR_VER );
+        lv_obj_set_style_pad_all( container, 5, LV_PART_MAIN );
+
+        text = lv_label_create( container );
+        lv_obj_set_width( text, lv_pct( 100 ) );
         lv_label_set_long_mode( text, LV_LABEL_LONG_WRAP );
-        lv_obj_set_size( text, 480, 240 );
+        lv_obj_set_height( text, LV_SIZE_CONTENT );
+        lv_label_set_recolor( text, true );
         lv_label_set_text( text, "" );
     }
 
@@ -111,6 +123,7 @@ namespace xfc {
             for ( int i = 0; i < brainMaxLines; i++ )
             {
                 brainConsole += brainLogConsole[ i ];
+                brainConsole += "\n";
             }
 
             //std::cout << "DBG: printing string \"" << brainLogConsole[ fc_logProperties::m_iCurrLine ] << "\" to brain screen on line" << fc_logProperties::m_iCurrLine << ";;;;;";
@@ -153,21 +166,24 @@ namespace xfc {
                     {
                         if ( ++fc_logProperties::m_iCurrLine >= brainMaxLines )
                         {
-                            for ( int i = 0; i < brainMaxLines - 1; i++ )
+                            for ( int i = 0; i < brainMaxLines - 1; ++i )
                             {
                                 brainLogConsole[ i ] = brainLogConsole[ i + 1 ];
                             }
 
                             brainLogConsole[ brainMaxLines - 1 ] = "";
-
-                            brainConsole.clear();
-                            for ( int i = 0; i < brainMaxLines; i++ )
-                            {
-                                brainConsole += brainLogConsole[ i ];
-                            }
-
-                            lv_label_set_text( text, brainConsole.c_str() );
                         }
+
+                        brainLogConsole[ fc_logProperties::m_iCurrLine ] += prevCol;
+
+                        brainConsole.clear();
+                        for ( int i = 0; i < brainMaxLines; ++i )
+                        {
+                            brainConsole += brainLogConsole[ i ];
+                            brainConsole += "\n";
+                        }
+
+                        lv_label_set_text( text, brainConsole.c_str() );
                     }
 
                     if ( sendToController )
@@ -240,40 +256,50 @@ namespace xfc {
         bool sendToBrain = true;
 #endif
 
-        pros::Color col;
-        char printCol[6];
+        //pros::Color col;
+        char printCol[ 6 ];
+        char col[ 9 ];
 
         switch ( type )
         {
             case 0:
-                col = pros::Color::gray;
+                //col = pros::Color::gray;
+                strcpy( col, "#7f7f7f " );
                 strcpy( printCol, "\033[37m" );
                 break;
 
             case 1:
-                col = pros::Color::white;
+                //col = pros::Color::white;
+                strcpy( col, "#ffffff " );
                 strcpy( printCol, "\033[37m" );
                 break;
 
             case 2:
-                col = pros::Color::orange;
+                //col = pros::Color::orange;
+                strcpy( col, "#ff7f00 " );
                 strcpy( printCol, "\033[91m" );
                 break;
 
             case 3:
             case 4:
-                col = pros::Color::red;
+                //col = pros::Color::red;
+                strcpy( col, "#ff0000 " );
                 strcpy( printCol, "\033[31m" );
                 break;
 
             default:
-                col = pros::Color::white;
+                //col = pros::Color::white;
+                strcpy( col, "#ffffff " );
                 strcpy( printCol, "\033[37m" );
                 break;
         }
 
-        //if ( sendToBrain )
+        if ( sendToBrain )
+        {
         //    pros::screen::set_pen( col );
+            brainLogConsole[ fc_logProperties::m_iCurrLine ] += col;
+            strcpy( prevCol, col );
+        }
 
         std::cout << printCol;
 
@@ -310,6 +336,7 @@ namespace xfc {
                 for ( int i = 0; i < brainMaxLines; i++ )
                 {
                     brainConsole += brainLogConsole[ i ];
+                    brainConsole += "\n";
                 }
 
                 lv_label_set_text( text, brainConsole.c_str() );
@@ -387,8 +414,12 @@ namespace xfc {
             }
         }
 
-        //if ( sendToBrain )
+        if ( sendToBrain )
+        {
         //    pros::screen::set_pen( pros::Color::white );
+            brainLogConsole[ fc_logProperties::m_iCurrLine ] += "#";
+            strcpy( prevCol, "\0\0\0\0\0\0\0\0" );
+        }
 
         std::cout << "\033[37m";
     }
