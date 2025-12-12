@@ -88,7 +88,7 @@ namespace xfc {
             controllerLogConsole[ i ] = "";
         }
 
-        container = lv_obj_create( lv_scr_act() );
+        container = lv_obj_create( globals::g_tTabCon );
         lv_obj_set_size( container, 480, 240 );
         lv_obj_set_scroll_dir( container, LV_DIR_VER );
         lv_obj_set_style_pad_all( container, 5, LV_PART_MAIN );

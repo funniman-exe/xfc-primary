@@ -9,6 +9,12 @@ namespace xfc
         //lv_obj_t *scr = nullptr;
         //lv_obj_t *win = nullptr;
 
+        lv_obj_t *g_tTabber = nullptr;
+        lv_obj_t *g_tTabBtns = nullptr;
+
+        lv_obj_t *g_tTabMain = nullptr;
+        lv_obj_t *g_tTabCon = nullptr;
+
         int g_bIsSkillsMatch = false;
         int g_bIsOnLeft = true;
         bool g_bAutonEnabled = true;

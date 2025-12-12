@@ -1,5 +1,22 @@
 #include "main.h"
 
+namespace xfc
+{
+	void fc_vis_init()
+	{
+		globals::g_tTabber = lv_tabview_create( lv_scr_act(), LV_DIR_TOP, 25 );
+		globals::g_tTabBtns = lv_tabview_get_tab_btns( globals::g_tTabber );
+
+		lv_obj_set_style_bg_color( globals::g_tTabBtns, lv_palette_darken( LV_PALETTE_GREY, 3 ), 0 );
+    	lv_obj_set_style_text_color( globals::g_tTabBtns, lv_palette_lighten( LV_PALETTE_GREY, 5 ), 0 );
+
+		globals::g_tTabMain = lv_tabview_add_tab( globals::g_tTabber, "Main" );
+		globals::g_tTabCon = lv_tabview_add_tab( globals::g_tTabber, "Console" );
+
+		lv_obj_clear_flag( lv_tabview_get_content( globals::g_tTabber ), LV_OBJ_FLAG_SCROLLABLE );
+	}
+}
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -17,6 +34,8 @@ void initialize()
 	//xfc::globals::win = lv_win_create( lv_screen_active() );
 
 	pros::Task batteryLoop( xfc::fc_batteryLoop );
+
+	xfc::fc_vis_init();
 
     xfc::fc_log_init();
 
