@@ -4,6 +4,10 @@
 #define botname "Jumbo"
 #define gamename "Pushback"
 
+#define scr_width 480
+#define scr_height 240
+#define scr_height_full ( scr_height + 32 )
+
 namespace xfc
 {
     namespace globals

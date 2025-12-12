@@ -89,7 +89,9 @@ namespace xfc {
         }
 
         container = lv_obj_create( globals::g_tTabCon );
-        lv_obj_set_size( container, 480, 240 );
+        lv_obj_set_size( container, scr_width, scr_height );
+        //lv_obj_set_width( container, LV_SIZE_CONTENT );
+        //lv_obj_set_height( container, LV_SIZE_CONTENT );
         lv_obj_set_scroll_dir( container, LV_DIR_VER );
         lv_obj_set_style_pad_all( container, 5, LV_PART_MAIN );
 
@@ -111,6 +113,23 @@ namespace xfc {
         fc_logProperties::m_iTextFmt = pros::text_format_e_t::E_TEXT_MEDIUM;
     }
 
+    void fc_update_console()
+    {
+        brainConsole.clear();
+        for ( int i = 0; i < brainMaxLines; i++ )
+        {
+            brainConsole += brainLogConsole[ i ];
+            brainConsole += "\n";
+        }
+
+        lv_label_set_text( text, brainConsole.c_str() );
+    }
+
+    void fc_tab_to_console()
+    {
+        lv_obj_scroll_to_view_recursive( text, LV_ANIM_ON );
+    }
+
     void __fc_log_print( const char *str, bool sendToBrain, bool sendToController, bool isFatal )
     {
         std::cout << str;
@@ -119,19 +138,13 @@ namespace xfc {
             if ( isFatal ) brainLogConsole[ fc_logProperties::m_iCurrLine ] += "    ";
             brainLogConsole[ fc_logProperties::m_iCurrLine ] += str;
 
-            brainConsole.clear();
-            for ( int i = 0; i < brainMaxLines; i++ )
-            {
-                brainConsole += brainLogConsole[ i ];
-                brainConsole += "\n";
-            }
+            fc_update_console();
 
             //std::cout << "DBG: printing string \"" << brainLogConsole[ fc_logProperties::m_iCurrLine ] << "\" to brain screen on line" << fc_logProperties::m_iCurrLine << ";;;;;";
 
             //pros::lcd::set_text( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ] );
             //pros::screen::print( fc_logProperties::m_iTextFmt, fc_logProperties::m_iCurrLine, str );
             //brainLogConsole += str;
-            lv_label_set_text( text, brainConsole.c_str() );
             //fc_logProperties::m_iCurrCol += fc_logProperties::m_iColChanged;
         }
         if ( sendToController )
@@ -176,14 +189,7 @@ namespace xfc {
 
                         brainLogConsole[ fc_logProperties::m_iCurrLine ] += prevCol;
 
-                        brainConsole.clear();
-                        for ( int i = 0; i < brainMaxLines; ++i )
-                        {
-                            brainConsole += brainLogConsole[ i ];
-                            brainConsole += "\n";
-                        }
-
-                        lv_label_set_text( text, brainConsole.c_str() );
+                        fc_update_console();
                     }
 
                     if ( sendToController )
@@ -326,20 +332,8 @@ namespace xfc {
                 //pros::lcd::set_text( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ] );
                 //pros::screen::print( fc_logProperties::m_iTextFmt, fc_logProperties::m_iCurrLine, "<%s - %s>: ", logTypeNames[type], loc );
                 //lv_label_set_text_fmt( text, "<%s - %s>: ", logTypeNames[type], loc );
-                //brainLogConsole += "<";
-                //brainLogConsole += logTypeNames[type];
-                //brainLogConsole += " - ";
-                //brainLogConsole += loc;
-                //brainLogConsole += ">: ";
 
-                brainConsole.clear();
-                for ( int i = 0; i < brainMaxLines; i++ )
-                {
-                    brainConsole += brainLogConsole[ i ];
-                    brainConsole += "\n";
-                }
-
-                lv_label_set_text( text, brainConsole.c_str() );
+                fc_update_console();
             }
             
             std::cout << prefix.c_str();
@@ -368,13 +362,7 @@ namespace xfc {
             brainLogConsole[ 6 ] = "";
             brainLogConsole[ 7 ] = "";
 
-            brainConsole.clear();
-            for ( int i = 0; i < brainMaxLines; i++ )
-            {
-                brainConsole += brainLogConsole[ i ];
-            }
-
-            lv_label_set_text( text, brainConsole.c_str() );
+            fc_update_console();
 
             //pros::lcd::set_text( 6, "Details: " );
             //pros::screen::print( pros::text_format_e_t::E_TEXT_MEDIUM, 0, "X(" );
