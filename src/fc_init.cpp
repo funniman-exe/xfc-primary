@@ -4,9 +4,14 @@ namespace xfc
 {
 	void fc_vis_init()
 	{
+		// creates tabber and tab buttons
 		globals::g_tTabber = lv_tabview_create( lv_scr_act(), LV_DIR_TOP, 10 );
 		globals::g_tTabBtns = lv_tabview_get_tab_btns( globals::g_tTabber );
 
+		// make buttons invisible by default
+		lv_obj_add_flag( globals::g_tTabBtns, LV_OBJ_FLAG_HIDDEN );
+
+		// styling
 		lv_obj_set_style_bg_color( globals::g_tTabBtns, lv_palette_darken( LV_PALETTE_GREY, 3 ), 0 );
     	lv_obj_set_style_text_color( globals::g_tTabBtns, lv_palette_lighten( LV_PALETTE_GREY, 5 ), 0 );
 		lv_obj_set_size( globals::g_tTabBtns, 200, 25 );
@@ -14,6 +19,7 @@ namespace xfc
 		globals::g_tTabMain = lv_tabview_add_tab( globals::g_tTabber, "Main" );
 		globals::g_tTabCon = lv_tabview_add_tab( globals::g_tTabber, "Console" );
 
+		// make the buttons aligned to the right
 		lv_obj_align( globals::g_tTabBtns, LV_ALIGN_TOP_RIGHT, 0, 0 );
 
 		lv_obj_clear_flag( lv_tabview_get_content( globals::g_tTabber ), LV_OBJ_FLAG_SCROLLABLE );
@@ -28,25 +34,11 @@ namespace xfc
  */
 void initialize()
 {
-	//lv_init();
-	//pros::lcd::initialize();
-
-	//xfc::globals::scr = lv_obj_create( NULL );
-	//lv_screen_load( xfc::globals::scr );
-
-	//xfc::globals::win = lv_win_create( lv_screen_active() );
-
 	pros::Task batteryLoop( xfc::fc_batteryLoop );
 
 	xfc::fc_vis_init();
-
     xfc::fc_log_init();
-
 	xfc::fc_initInput();
-
-	//xfc::fc_log( xfc::logTypes::Info, true, false, __func__, "Testerooni" );
-
-	//pros::lcd::register_btn1_cb( on_center_button );
 
 	xfc::fc_startup();
 }
@@ -55,11 +47,9 @@ void initialize()
 void destruct()
 {
 	xfc::fc_shutdown();
-
+	
 	xfc::fc_deinitInput();
-
 	xfc::fc_log_deinit();
-	pros::lcd::shutdown();
 }
 
 void llemu_switch_matchtype()

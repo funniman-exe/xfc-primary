@@ -2,6 +2,7 @@
 
 #define turnTime90 425
 
+/// @brief Dummy auton -- Moves forward a tiny amount to leave park zone
 void auton_dummy()
 {
 	xfc::globals::g_mgLeft.move( 64 );
@@ -13,6 +14,7 @@ void auton_dummy()
 	while ( true ) { pros::delay( 20 ); }
 }
 
+/// @brief Skills auton
 void auton_skills()
 {
 	xfc::globals::g_mgLeft.move( 64 );
@@ -170,6 +172,7 @@ void auton_skills()
 	while ( true ) { pros::delay( 20 ); }
 }
 
+/// @brief Left side auton
 void auton_left()
 {
 	xfc::globals::g_mgLeft.move( 64 );
@@ -250,6 +253,7 @@ void auton_left()
 	while ( true ) { pros::delay( 20 ); }
 }
 
+/// @brief Right side auton
 void auton_right()
 {
 	xfc::globals::g_mgLeft.move( 64 );
@@ -344,13 +348,9 @@ void auton_right()
 void autonomous()
 {
 	if ( !xfc::globals::g_bAutonEnabled )
-	{
 		auton_dummy();
-	}
 	else if ( xfc::globals::g_bIsSkillsMatch )
-	{
 		auton_skills();
-	}
 	else
 	{
 		if ( xfc::globals::g_bIsOnLeft )

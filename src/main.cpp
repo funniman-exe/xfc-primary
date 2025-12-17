@@ -22,7 +22,7 @@ namespace xfc
 
 		if ( !globals::g_cMaster->is_connected() )
 		{
-			fc_log( logTypes::ERROR, false, true, __func__, "Master controller not detected.\n		Please sync the Master controller.\n" );
+			fc_log( logTypes::Warning, false, true, __func__, "Master controller not detected.\n		Please sync the Master controller.\n" );
 		}
 
 		if ( !globals::g_cSlave->is_connected() )
@@ -30,7 +30,7 @@ namespace xfc
 	#ifndef REQUIRE_SLAVE_CONTROLLER
 			fc_log( logTypes::Warning, false, true, __func__, "Slave controller not detected.\n" );
 	#else
-			fc_log( logTypes::ERROR, false, true, __func__, "Slave controller not detected.\n		Please sync the Slave controller.\n" );
+			fc_log( logTypes::Warning, false, true, __func__, "Slave controller not detected.\n		Please sync the Slave controller.\n" );
 	#endif
 		}
 	}
@@ -43,6 +43,7 @@ namespace xfc
 		fc_log( logTypes::Info, false, false, __func__, "Thank you for using " libname "\n" );
 	}
 
+	/// @brief Loops until battery level goes below 10 or 5, then displays a message
 	void fc_batteryLoop()
 	{
 		while ( true )

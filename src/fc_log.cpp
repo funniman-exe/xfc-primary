@@ -47,7 +47,6 @@ namespace xfc {
         int m_iCurrControllerLine;
         int m_iCurrControllerCol;
         int m_iColChanged;
-        pros::text_format_e_t m_iTextFmt;
     }
 
     #define brainMaxLines 8
@@ -71,7 +70,6 @@ namespace xfc {
         fc_logProperties::m_iCurrControllerLine = 0;
         fc_logProperties::m_iCurrControllerCol = 0;
         fc_logProperties::m_iColChanged = 0;
-        fc_logProperties::m_iTextFmt = pros::text_format_e_t::E_TEXT_MEDIUM;
 
         //pros::screen::erase();
         //pros::lcd::clear();
@@ -110,7 +108,6 @@ namespace xfc {
         fc_logProperties::m_iCurrControllerLine = 0;
         fc_logProperties::m_iCurrControllerCol = 0;
         fc_logProperties::m_iColChanged = 0;
-        fc_logProperties::m_iTextFmt = pros::text_format_e_t::E_TEXT_MEDIUM;
     }
 
     void fc_update_console()
@@ -127,7 +124,8 @@ namespace xfc {
 
     void fc_tab_to_console()
     {
-        lv_obj_scroll_to_view_recursive( text, LV_ANIM_ON );
+        lv_obj_clear_flag( globals::g_tTabBtns, LV_OBJ_FLAG_HIDDEN );
+        lv_obj_scroll_to_view_recursive( container, LV_ANIM_ON );
     }
 
     void __fc_log_print( const char *str, bool sendToBrain, bool sendToController, bool isFatal )
@@ -401,6 +399,7 @@ namespace xfc {
                 pros::delay( 10 );
             }
         }
+        else if ( type == logTypes::ERROR ) fc_tab_to_console();
 
         if ( sendToBrain )
         {

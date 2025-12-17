@@ -12,9 +12,6 @@ namespace xfc
 {
     namespace globals
     {
-        //extern lv_obj_t *scr; // LVGL Screen
-        //extern lv_obj_t *win; // LVGL Window
-
         extern lv_obj_t *g_tTabber; // LVGL Tabber
         extern lv_obj_t *g_tTabBtns; // LVGL Tabber (Buttons)
 

@@ -6,9 +6,6 @@ namespace xfc
 {
     namespace globals
     {
-        //lv_obj_t *scr = nullptr;
-        //lv_obj_t *win = nullptr;
-
         lv_obj_t *g_tTabber = nullptr;
         lv_obj_t *g_tTabBtns = nullptr;
 
