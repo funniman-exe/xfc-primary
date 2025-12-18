@@ -6,19 +6,19 @@ namespace xfc
 {
     namespace globals
     {
+        // UI Stuff
         lv_obj_t *g_tTabber = nullptr;
         lv_obj_t *g_tTabBtns = nullptr;
 
         lv_obj_t *g_tTabMain = nullptr;
         lv_obj_t *g_tTabCon = nullptr;
 
+        // Match config options
         int g_bIsSkillsMatch = false;
         int g_bIsOnLeft = true;
         bool g_bAutonEnabled = true;
 
         bool g_bIsCompetitionMatch = false;
-
-        //bool g_llemu_options_lockedin = false;
 
         // Controllers
         pros::Controller *g_cMaster = nullptr;

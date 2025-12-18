@@ -16,6 +16,8 @@
 #define _PROS_MAIN_H_
 
 #include "pros.h"
+#include "lemlib/api.hpp"
+
 #include "fc_globls.h"
 #include "fc_log.h"
 #include "fc_input_manager.h"

@@ -1,5 +1,7 @@
 #include "main.h"
 
+LV_IMG_DECLARE( SCARY );
+
 namespace xfc
 {
 	void fc_vis_init()
@@ -23,6 +25,9 @@ namespace xfc
 		lv_obj_align( globals::g_tTabBtns, LV_ALIGN_TOP_RIGHT, 0, 0 );
 
 		lv_obj_clear_flag( lv_tabview_get_content( globals::g_tTabber ), LV_OBJ_FLAG_SCROLLABLE );
+
+		lv_obj_t *iTabMain_CentrePiece = lv_img_create( globals::g_tTabMain );
+		lv_img_set_src( iTabMain_CentrePiece, &SCARY );
 	}
 }
 

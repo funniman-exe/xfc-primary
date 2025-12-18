@@ -1,8 +1,8 @@
 // ------------------------------------------------------------- //
-//              XFC ( eXtra Featured Comp-project )              //
+//           XFC ( eXtra Featured Comp-project ) PROS            //
 //   Designed for the Vex V5 Competition Season of 2025 - 2026   //
-//                Written by funniman.exe (c) 2025               //
-//                  Lasted updated - 25/11/2025                  //
+//                Written by funniman.exe (c) 2026               //
+//                  Lasted updated - 18/12/2025                  //
 // ------------------------------------------------------------- //
 
 #include "main.h"
@@ -22,7 +22,7 @@ namespace xfc
 
 		if ( !globals::g_cMaster->is_connected() )
 		{
-			fc_log( logTypes::Warning, false, true, __func__, "Master controller not detected.\n		Please sync the Master controller.\n" );
+			fc_log( logTypes::Warning, false, true, __func__, "Master controller not detected.\n        Please sync the Master controller.\n" );
 		}
 
 		if ( !globals::g_cSlave->is_connected() )
@@ -30,9 +30,11 @@ namespace xfc
 	#ifndef REQUIRE_SLAVE_CONTROLLER
 			fc_log( logTypes::Warning, false, true, __func__, "Slave controller not detected.\n" );
 	#else
-			fc_log( logTypes::Warning, false, true, __func__, "Slave controller not detected.\n		Please sync the Slave controller.\n" );
+			fc_log( logTypes::Warning, false, true, __func__, "Slave controller not detected.\n        Please sync the Slave controller.\n" );
 	#endif
 		}
+
+		fc_log( logTypes::ERROR, false, true, __func__, ":3\n" );
 	}
 
 	void fc_shutdown()
@@ -40,7 +42,7 @@ namespace xfc
 		pros::lcd::clear();
 		//pros::screen::erase();
 
-		fc_log( logTypes::Info, false, false, __func__, "Thank you for using " libname "\n" );
+		fc_log( logTypes::Info, false, false, __func__, shortlibname " Shutdown: Thank you for using " libname "\n" );
 	}
 
 	/// @brief Loops until battery level goes below 10 or 5, then displays a message
@@ -48,6 +50,9 @@ namespace xfc
 	{
 		while ( true )
 		{
+			if ( pros::battery::get_capacity() <= 5 )
+				goto __battery_critical;
+
 			if ( pros::battery::get_capacity() <= 10 )
 				break;
 			
@@ -69,6 +74,7 @@ namespace xfc
 			pros::delay( 125 );
 		}
 
+	__battery_critical:
 		xfc::globals::g_cMaster->clear();
 		xfc::globals::g_cSlave->clear();
 
@@ -90,7 +96,7 @@ void disabled()
 
 	if ( !disabled )
 	{
-		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "XFC is currently disabled." );
+		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "XFC is currently in a disabled state." );
 		disabled = true;
 	}
 
@@ -119,7 +125,6 @@ void disabled()
 		break;
 	}
 
-	//pros::lcd::set_text( xfc::fc_logProperties::m_iCurrLine + 1, loadingText.c_str() );
-	//pros::screen::print( pros::text_format_e_t::E_TEXT_MEDIUM, xfc::fc_logProperties::m_iCurrLine + 1, loadingText.c_str() );
+
 	pros::delay( 625 );
 }

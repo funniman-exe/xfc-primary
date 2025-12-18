@@ -1,6 +1,7 @@
 #pragma once
 
 #define libname "XFC [PROS]"
+#define shortlibname "XFC"
 #define botname "Jumbo"
 #define gamename "Pushback"
 
@@ -12,19 +13,19 @@ namespace xfc
 {
     namespace globals
     {
+        // UI Stuff
         extern lv_obj_t *g_tTabber; // LVGL Tabber
         extern lv_obj_t *g_tTabBtns; // LVGL Tabber (Buttons)
 
         extern lv_obj_t *g_tTabMain; // LVGL Main Tab
         extern lv_obj_t *g_tTabCon; // LVGL Console Tab
 
+        // Match config options
         extern int g_bIsSkillsMatch;
         extern int g_bIsOnLeft;
         extern bool g_bAutonEnabled;
 
         extern bool g_bIsCompetitionMatch;
-
-        //extern bool g_llemu_options_lockedin;
 
         // Controllers
         extern pros::Controller *g_cMaster; // Master Controller
