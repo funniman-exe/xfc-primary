@@ -2,6 +2,47 @@
 
 #define turnTime90 425
 
+void auton_ramIntake( int ramCount = 3 )
+{
+	xfc::globals::g_pMatchload.set_value( 1 );
+	xfc::globals::g_mgGantry.move( 127 );
+
+	pros::delay( 500 );
+
+	xfc::globals::g_mgLeft.move( 127 );
+	xfc::globals::g_mgRight.move( 127 );
+	pros::delay( 600 );
+	xfc::globals::g_mgLeft.brake();
+	xfc::globals::g_mgRight.brake();
+
+	if ( ramCount > 1 )
+	{
+		for ( int i = 0; i < ( ramCount - 1 ); ++i )
+		{
+			pros::delay( 50 );
+
+			xfc::globals::g_mgLeft.move( -64 );
+			xfc::globals::g_mgRight.move( -64 );
+			pros::delay( 125 );
+			xfc::globals::g_mgLeft.brake();
+			xfc::globals::g_mgRight.brake();
+
+			pros::delay( 50 );
+
+			xfc::globals::g_mgLeft.move( 127 );
+			xfc::globals::g_mgRight.move( 127 );
+			pros::delay( 300 );
+			xfc::globals::g_mgLeft.brake();
+			xfc::globals::g_mgRight.brake();
+		}
+	}
+
+	pros::delay( 250 );
+	
+	xfc::globals::g_mgGantry.brake();
+	xfc::globals::g_pMatchload.set_value( 0 );
+}
+
 /// @brief Dummy auton -- Moves forward a tiny amount to leave park zone
 void auton_dummy()
 {

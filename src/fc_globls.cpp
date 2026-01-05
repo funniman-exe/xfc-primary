@@ -25,12 +25,12 @@ namespace xfc
         pros::Controller *g_cSlave = nullptr;
 
         // Motors -- negitive numbers denote reversed motors
-        pros::MotorGroup g_mgLeft( { -19, -20 } );
-        pros::MotorGroup g_mgRight( { 16, 17 } );
+        pros::MotorGroup g_mgLeft( { -19, -20 }, pros::MotorGearset::green );
+        pros::MotorGroup g_mgRight( { 16, 17 }, pros::MotorGearset::green );
 
-        pros::MotorGroup g_mgGantry( { 2, -18 } );
+        pros::MotorGroup g_mgGantry( { 2, -18 }, pros::MotorGearset::blue );
 
-        pros::MotorGroup g_mgOutput( { 15, 3 } );
+        pros::MotorGroup g_mgOutput( { 15, 3 }, pros::MotorGearset::blue );
 
         // Digital IO
         pros::adi::DigitalOut g_pParking = pros::adi::DigitalOut( 1, false );
@@ -40,5 +40,8 @@ namespace xfc
         pros::adi::Button g_sParkingSwitchB = pros::adi::Button( 4 );
 
         pros::adi::DigitalOut g_pDeload = pros::adi::DigitalOut( 5, false );
+
+        // LemLib Drivetrain
+        lemlib::Drivetrain g_dDrivetrain( &g_mgLeft, &g_mgRight, 12.25, lemlib::Omniwheel::NEW_325, 360, 2 );
     }
 }

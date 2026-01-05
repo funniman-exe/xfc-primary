@@ -42,8 +42,12 @@ namespace xfc
 
 		if ( ( dir != prevDir ) || ( turn != prevTurn ) )
 		{
-			globals::g_mgLeft.move( dir + ( turn / 1.5 ) );                      // Sets left motor voltage
-			globals::g_mgRight.move( dir - ( turn / 1.5 ) );                     // Sets right motor voltage
+			// Pre-LemLib
+			//globals::g_mgLeft.move( dir + ( turn / 1.5 ) );                      // Sets left motor voltage
+			//globals::g_mgRight.move( dir - ( turn / 1.5 ) );                     // Sets right motor voltage
+
+			// Post-LemLib
+			//globals::g_cChassis.arcade( dir, turn );
 
 			prevDir = dir;
 			prevTurn = turn;

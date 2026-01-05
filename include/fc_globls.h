@@ -47,5 +47,8 @@ namespace xfc
         extern pros::adi::Button g_sParkingSwitchB; // Parking Switch B
 
         extern pros::adi::DigitalOut g_pDeload; // Deload Pneumatics
+
+        // LemLib Drivetrain
+        extern lemlib::Drivetrain g_dDrivetrain; // Drivetrain
     }
 }
