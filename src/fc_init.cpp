@@ -26,6 +26,8 @@ namespace xfc
 
 		lv_obj_clear_flag( lv_tabview_get_content( globals::g_tTabber ), LV_OBJ_FLAG_SCROLLABLE );
 
+		fc_scroll_to_console();
+
 		lv_obj_t *iTabMain_CentrePiece = lv_img_create( globals::g_tTabMain );
 		lv_img_set_src( iTabMain_CentrePiece, &SCARY );
 	}
@@ -39,10 +41,16 @@ namespace xfc
  */
 void initialize()
 {
-	pros::Task batteryLoop( xfc::fc_batteryLoop );
-
 	xfc::fc_vis_init();
-    xfc::fc_log_init();
+	xfc::fc_log_init();
+
+	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "Hewwo :3 I am " botname "!!!\n" );
+	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "-- Welcome to " libname " (configured for " gamename ") --\n" );
+	//fc_log( logTypes::Info, false, false, __func__, "ich bin das krankenhaus" );
+	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "  (c) 2025 funniman.exe\n" );
+	xfc::fc_log( xfc::logTypes::Debug, false, true, __func__, "Init Start\n" );
+
+	pros::Task batteryLoop( xfc::fc_batteryLoop );
 	xfc::fc_initInput();
 
 	xfc::fc_startup();
@@ -137,4 +145,6 @@ void competition_initialize()
 	pros::lcd::set_text( 3, "Side of Field: LEFT" );
 	pros::lcd::set_text( 4, "Match Type: NORMAL" );
 	pros::lcd::set_text( 5, "Auton Status: ENABLED" );*/
+
+	xfc::fc_log( xfc::logTypes::Info, false, true, __func__, "Comp Init finished, waiting for match controller..." );
 }

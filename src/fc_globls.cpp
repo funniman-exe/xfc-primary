@@ -1,3 +1,4 @@
+#include "__use_lemlib.h"
 
 #include "pros.h"
 #include "fc_globls.h"
@@ -30,7 +31,8 @@ namespace xfc
 
         pros::MotorGroup g_mgGantry( { 2, -18 }, pros::MotorGearset::blue );
 
-        pros::MotorGroup g_mgOutput( { 15, 3 }, pros::MotorGearset::blue );
+        //pros::MotorGroup g_mgOutput( { 15, 3 }, pros::MotorGearset::blue );
+        pros::Motor g_mOutput( 15, pros::MotorGearset::blue );
 
         // Digital IO
         pros::adi::DigitalOut g_pParking = pros::adi::DigitalOut( 1, false );
@@ -41,7 +43,42 @@ namespace xfc
 
         pros::adi::DigitalOut g_pDeload = pros::adi::DigitalOut( 5, false );
 
-        // LemLib Drivetrain
+#ifdef __XFC_USE_LEMLIB
+        // LemLib Stuff
         lemlib::Drivetrain g_dDrivetrain( &g_mgLeft, &g_mgRight, 12.25, lemlib::Omniwheel::NEW_325, 360, 2 );
+
+        pros::Imu g_iImu( 12 );
+        pros::Rotation g_eHoriz( 13 );
+        pros::Rotation g_eVert( 14 );
+
+        lemlib::TrackingWheel g_tHorizTrackingWheel( &g_eHoriz, lemlib::Omniwheel::NEW_275, -2.5 );
+        lemlib::TrackingWheel g_tVertTrackingWheel( &g_eVert, lemlib::Omniwheel::NEW_275, -2.5 );
+
+        lemlib::OdomSensors g_sSensors( &g_tVertTrackingWheel, nullptr, &g_tHorizTrackingWheel, nullptr, &g_iImu );
+
+        lemlib::ControllerSettings g_pidConLateral(10, // proportional gain (kP)
+                                                    0, // integral gain (kI)
+                                                    3, // derivative gain (kD)
+                                                    3, // anti windup
+                                                    1, // small error range, in inches
+                                                    100, // small error range timeout, in milliseconds
+                                                    3, // large error range, in inches
+                                                    500, // large error range timeout, in milliseconds
+                                                    20 // maximum acceleration (slew)
+        );
+
+        lemlib::ControllerSettings g_pidConAngular(2, // proportional gain (kP)
+                                                    0, // integral gain (kI)
+                                                    10, // derivative gain (kD)
+                                                    3, // anti windup
+                                                    1, // small error range, in degrees
+                                                    100, // small error range timeout, in milliseconds
+                                                    3, // large error range, in degrees
+                                                    500, // large error range timeout, in milliseconds
+                                                    0 // maximum acceleration (slew)
+        );
+
+        lemlib::Chassis g_cChassis( g_dDrivetrain, g_pidConLateral, g_pidConAngular, g_sSensors );
+#endif
     }
 }

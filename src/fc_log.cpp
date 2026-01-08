@@ -24,6 +24,8 @@ const char* to_char( int value )
 }
 
 namespace xfc {
+    bool logInit = false;
+
     const char* logTypeNames[] = {
         "Debug",
         "Info",
@@ -61,7 +63,22 @@ namespace xfc {
 
     char prevCol[ 9 ];
 
-    // #define DEBUG_LOG
+    void fc_log_visInit()
+    {
+        container = lv_obj_create( globals::g_tTabCon );
+        lv_obj_set_size( container, scr_width, scr_height );
+        //lv_obj_set_width( container, LV_SIZE_CONTENT );
+        //lv_obj_set_height( container, LV_SIZE_CONTENT );
+        lv_obj_set_scroll_dir( container, LV_DIR_VER );
+        lv_obj_set_style_pad_all( container, 5, LV_PART_MAIN );
+
+        text = lv_label_create( container );
+        lv_obj_set_width( text, lv_pct( 100 ) );
+        lv_label_set_long_mode( text, LV_LABEL_LONG_WRAP );
+        lv_obj_set_height( text, LV_SIZE_CONTENT );
+        lv_label_set_recolor( text, true );
+        lv_label_set_text( text, "" );
+    }
 
     void fc_log_init()
     {
@@ -86,28 +103,31 @@ namespace xfc {
             controllerLogConsole[ i ] = "";
         }
 
-        container = lv_obj_create( globals::g_tTabCon );
-        lv_obj_set_size( container, scr_width, scr_height );
-        //lv_obj_set_width( container, LV_SIZE_CONTENT );
-        //lv_obj_set_height( container, LV_SIZE_CONTENT );
-        lv_obj_set_scroll_dir( container, LV_DIR_VER );
-        lv_obj_set_style_pad_all( container, 5, LV_PART_MAIN );
+        fc_log_visInit();
 
-        text = lv_label_create( container );
-        lv_obj_set_width( text, lv_pct( 100 ) );
-        lv_label_set_long_mode( text, LV_LABEL_LONG_WRAP );
-        lv_obj_set_height( text, LV_SIZE_CONTENT );
-        lv_label_set_recolor( text, true );
-        lv_label_set_text( text, "" );
+        logInit = true;
+    }
+
+    void fc_log_visDeinit()
+    {
+        lv_obj_del( container );
+        lv_obj_del( text );
     }
 
     void fc_log_deinit()
     {
+        if ( !logInit )
+            return;
+        
+        fc_log_visDeinit();
+
         fc_logProperties::m_iCurrLine = 0;
         fc_logProperties::m_iCurrCol = 0;
         fc_logProperties::m_iCurrControllerLine = 0;
         fc_logProperties::m_iCurrControllerCol = 0;
         fc_logProperties::m_iColChanged = 0;
+
+        logInit = false;
     }
 
     void fc_update_console()
@@ -126,6 +146,11 @@ namespace xfc {
     {
         lv_obj_clear_flag( globals::g_tTabBtns, LV_OBJ_FLAG_HIDDEN );
         lv_obj_scroll_to_view_recursive( container, LV_ANIM_ON );
+    }
+
+    void fc_scroll_to_console()
+    {
+        lv_obj_scroll_to_view_recursive( container, LV_ANIM_OFF );
     }
 
     void __fc_log_print( const char *str, bool sendToBrain, bool sendToController, bool isFatal )
@@ -252,7 +277,7 @@ namespace xfc {
 
     void fc_log( uint8_t type, bool sendToController, bool usePrefix, const char* loc, const char* fmt, ... )
     {
-#ifndef DEBUG_LOG
+#ifndef __XFC_DEBUG_LOG
         bool sendToBrain = false;
 
         if ( type != logTypes::Debug ) sendToBrain = true;

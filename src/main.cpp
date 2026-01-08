@@ -14,10 +14,6 @@ namespace xfc
 		//pros::lcd::clear();
 		//pros::screen::erase();
 
-		fc_log( logTypes::Info, false, false, __func__, "Hewwo :3 I am " botname "!!!\n" );
-		fc_log( logTypes::Info, false, false, __func__, "-- Welcome to " libname " (configured for " gamename ") --\n" );
-		//fc_log( logTypes::Info, false, false, __func__, "ich bin das krankenhaus" );
-		fc_log( logTypes::Info, false, false, __func__, "  (c) 2025 funniman.exe\n" );
 		fc_log( logTypes::Debug, false, true, __func__, "Begin Program\n" );
 
 		if ( !globals::g_cMaster->is_connected() )
@@ -33,8 +29,6 @@ namespace xfc
 			fc_log( logTypes::Warning, false, true, __func__, "Slave controller not detected.\n        Please sync the Slave controller.\n" );
 	#endif
 		}
-
-		fc_log( logTypes::ERROR, false, true, __func__, ":3\n" );
 	}
 
 	void fc_shutdown()
@@ -96,35 +90,9 @@ void disabled()
 
 	if ( !disabled )
 	{
-		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "XFC is currently in a disabled state." );
+		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "NEW STATE: DISABLED" );
 		disabled = true;
 	}
-
-	static std::string loadingText = "Awaiting ";
-
-	switch ( loadingAnimCounter++ )
-	{
-	case 0:
-		loadingText += "/";
-		break;
-	
-	case 1:
-		loadingText += "-";
-		break;
-
-	case 2:
-		loadingText += "\\";
-		break;
-
-	case 3:
-		loadingAnimCounter = 0;
-		loadingText += "|";
-		break;
-	
-	default:
-		break;
-	}
-
 
 	pros::delay( 625 );
 }

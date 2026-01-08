@@ -1,5 +1,7 @@
 #pragma once
 
+#include "__use_lemlib.h"
+
 #define libname "XFC [PROS]"
 #define shortlibname "XFC"
 #define botname "Jumbo"
@@ -37,7 +39,8 @@ namespace xfc
 
         extern pros::MotorGroup g_mgGantry; // Gantry Motorgroup
 
-        extern pros::MotorGroup g_mgOutput; // Output Motorgroup
+        //extern pros::MotorGroup g_mgOutput; // Output Motorgroup
+        extern pros::Motor g_mOutput; // Output Motor
 
         // Digital IO
         extern pros::adi::DigitalOut g_pParking; // Parking Pneumatics
@@ -48,7 +51,23 @@ namespace xfc
 
         extern pros::adi::DigitalOut g_pDeload; // Deload Pneumatics
 
-        // LemLib Drivetrain
+#ifdef __XFC_USE_LEMLIB
+        // LemLib Stuff
         extern lemlib::Drivetrain g_dDrivetrain; // Drivetrain
+
+        extern pros::Imu g_iImu; // PID IMU 
+        extern pros::Rotation g_eHoriz; // PID Horizontal Rotation Sensor
+        extern pros::Rotation g_eVert; // PID Vertical Rotation Sensory
+
+        extern lemlib::TrackingWheel g_tHorizTrackingWheel; // PID Horizontal Tracking Wheel
+        extern lemlib::TrackingWheel g_tVertTrackingWheel; // PID Vertical Tracking Wheel
+
+        extern lemlib::OdomSensors g_sSensors; // PID Odom Sensors
+
+        extern lemlib::ControllerSettings g_pidConLateral; // PID Controller (Lateral)
+        extern lemlib::ControllerSettings g_pidConAngular; // PID Controller (Angular)
+
+        extern lemlib::Chassis g_cChassis; // Chassis
+#endif
     }
 }

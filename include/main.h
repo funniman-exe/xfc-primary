@@ -15,8 +15,12 @@
 #ifndef _PROS_MAIN_H_
 #define _PROS_MAIN_H_
 
+#include "__use_lemlib.h"
+
 #include "pros.h"
+#ifdef __XFC_USE_LEMLIB
 #include "lemlib/api.hpp"
+#endif
 
 #include "fc_globls.h"
 #include "fc_log.h"

@@ -2,9 +2,15 @@
 
 #include <string>
 
+#define __XFC_DEBUG_LOG
+
 namespace xfc {
+    extern bool logInit;
+
     void fc_log_init();
     void fc_log_deinit();
+
+    void fc_scroll_to_console();
 
     /// @brief XFC's custom logging function
     /// @param type Type of log (see the logTypes enum)

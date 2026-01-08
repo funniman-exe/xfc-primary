@@ -37,17 +37,17 @@ namespace xfc
 	void fc_updateArcade()
 	{
 		// Arcade control scheme
-		int32_t dir = globals::g_cMaster->get_analog( ANALOG_LEFT_Y );    // Gets amount forward/backward from left joystick
-		int32_t turn = globals::g_cMaster->get_analog( ANALOG_RIGHT_X );  // Gets the turn left/right from right joystick
+		int32_t dir = globals::g_cMaster->get_analog( ANALOG_LEFT_Y );		// Gets amount forward/backward from left joystick
+		int32_t turn = globals::g_cMaster->get_analog( ANALOG_RIGHT_X );	// Gets the turn left/right from right joystick
 
 		if ( ( dir != prevDir ) || ( turn != prevTurn ) )
 		{
-			// Pre-LemLib
-			//globals::g_mgLeft.move( dir + ( turn / 1.5 ) );                      // Sets left motor voltage
-			//globals::g_mgRight.move( dir - ( turn / 1.5 ) );                     // Sets right motor voltage
-
-			// Post-LemLib
-			//globals::g_cChassis.arcade( dir, turn );
+#ifndef __XFC_USE_LEMLIB
+			globals::g_mgLeft.move( dir + ( turn / 1.5 ) );					// Sets left motor voltage
+			globals::g_mgRight.move( dir - ( turn / 1.5 ) );				// Sets right motor voltage
+#else
+			globals::g_cChassis.arcade( dir, turn );						// Arcade controls
+#endif
 
 			prevDir = dir;
 			prevTurn = turn;
@@ -85,19 +85,22 @@ namespace xfc
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_L1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_L2 ) )
 		{
-			globals::g_mgOutput.brake();
+			//globals::g_mgOutput.brake();
+			globals::g_mOutput.brake();
 		}
 
 		if ( globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_L1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_L2 ) )
 		{
-			globals::g_mgOutput.move( targetOutputVoltage );
+			//globals::g_mgOutput.move( targetOutputVoltage );
+			globals::g_mOutput.move( targetOutputVoltage );
 		}
 
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_L1 )
 			&& globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_L2 ) )
 		{
-			globals::g_mgOutput.move( -targetOutputVoltage );
+			//globals::g_mgOutput.move( -targetOutputVoltage );
+			globals::g_mOutput.move( -targetOutputVoltage );
 		}
 	}
 
@@ -178,6 +181,9 @@ namespace xfc
 	/// @brief Input Manager Initialization
 	void fc_initInput()
 	{
+#ifdef __XFC_USE_LEMLIB
+		globals::g_cChassis.calibrate();
+#endif
 		globals::g_cMaster = new pros::Controller( pros::E_CONTROLLER_MASTER );
 		globals::g_cSlave = new pros::Controller( pros::E_CONTROLLER_PARTNER );
 
@@ -220,11 +226,6 @@ void opcontrol()
 	while ( true )
 	{
 		while ( !xfc::globals::g_cMaster->is_connected() ) { pros::delay( 20 ); }
-
-		/*pros::lcd::print( 0, "%d %d %d", ( pros::lcd::read_buttons() & LCD_BTN_LEFT ) >> 2,
-		                 ( pros::lcd::read_buttons() & LCD_BTN_CENTER ) >> 1,
-		                 ( pros::lcd::read_buttons() & LCD_BTN_RIGHT ) >> 0 );  // Prints status of the emulated screen LCDs
-		*/
 
 		xfc::fc_updateControls();
 		pros::delay( 20 );

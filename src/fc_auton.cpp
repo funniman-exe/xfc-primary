@@ -51,8 +51,6 @@ void auton_dummy()
 	pros::delay( 250 );
 	xfc::globals::g_mgLeft.brake();
 	xfc::globals::g_mgRight.brake();
-
-	while ( true ) { pros::delay( 20 ); }
 }
 
 /// @brief Skills auton
@@ -74,101 +72,7 @@ void auton_skills()
 
 	pros::delay( 250 );
 
-	xfc::globals::g_pMatchload.set_value( 1 );
-	xfc::globals::g_mgGantry.move( 127 );
-
-	pros::delay( 500 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 600 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-	
-	xfc::globals::g_mgGantry.brake();
-	xfc::globals::g_pMatchload.set_value( 0 );
+	auton_ramIntake( 6 );
 
 	xfc::globals::g_mgLeft.move( -64 );
 	xfc::globals::g_mgRight.move( -64 );
@@ -179,12 +83,12 @@ void auton_skills()
 	pros::delay( 250 );
 
 	xfc::globals::g_mgGantry.move( 127 );
-	xfc::globals::g_mgOutput.move( 127 );
+	xfc::globals::g_mOutput.move( 127 );
 
 	pros::delay( 6000 );
 
 	xfc::globals::g_mgGantry.brake();
-	xfc::globals::g_mgOutput.brake();
+	xfc::globals::g_mOutput.brake();
 
 	xfc::globals::g_mgLeft.move( 64 );
 	xfc::globals::g_mgRight.move( 64 );
@@ -209,8 +113,6 @@ void auton_skills()
 	xfc::globals::g_mgRight.brake();
 
 	pros::delay( 250 );
-
-	while ( true ) { pros::delay( 20 ); }
 }
 
 /// @brief Left side auton
@@ -232,53 +134,7 @@ void auton_left()
 
 	pros::delay( 250 );
 
-	xfc::globals::g_pMatchload.set_value( 1 );
-	xfc::globals::g_mgGantry.move( 127 );
-
-	pros::delay( 500 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 600 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-	
-	xfc::globals::g_mgGantry.brake();
-	xfc::globals::g_pMatchload.set_value( 0 );
+	auton_ramIntake( 3 );
 
 	xfc::globals::g_mgLeft.move( -64 );
 	xfc::globals::g_mgRight.move( -64 );
@@ -289,9 +145,7 @@ void auton_left()
 	pros::delay( 250 );
 
 	xfc::globals::g_mgGantry.move( 127 );
-	xfc::globals::g_mgOutput.move( 127 );
-
-	while ( true ) { pros::delay( 20 ); }
+	xfc::globals::g_mOutput.move( 127 );
 }
 
 /// @brief Right side auton
@@ -313,53 +167,7 @@ void auton_right()
 
 	pros::delay( 250 );
 
-	xfc::globals::g_pMatchload.set_value( 1 );
-	xfc::globals::g_mgGantry.move( 127 );
-
-	pros::delay( 500 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 600 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( -64 );
-	xfc::globals::g_mgRight.move( -64 );
-	pros::delay( 125 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 50 );
-
-	xfc::globals::g_mgLeft.move( 127 );
-	xfc::globals::g_mgRight.move( 127 );
-	pros::delay( 300 );
-	xfc::globals::g_mgLeft.brake();
-	xfc::globals::g_mgRight.brake();
-
-	pros::delay( 250 );
-	
-	xfc::globals::g_mgGantry.brake();
-	xfc::globals::g_pMatchload.set_value( 0 );
+	auton_ramIntake( 3 );
 
 	xfc::globals::g_mgLeft.move( -64 );
 	xfc::globals::g_mgRight.move( -64 );
@@ -370,9 +178,7 @@ void auton_right()
 	pros::delay( 250 );
 
 	xfc::globals::g_mgGantry.move( 127 );
-	xfc::globals::g_mgOutput.move( 127 );
-
-	while ( true ) { pros::delay( 20 ); }
+	xfc::globals::g_mOutput.move( 127 );
 }
 
 /**
@@ -399,4 +205,7 @@ void autonomous()
 		else
 			auton_right();
 	}
+
+	// Auton program has finished -- now we wait
+	while ( true ) { pros::delay( 20 ); }
 }
