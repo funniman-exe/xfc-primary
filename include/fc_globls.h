@@ -4,12 +4,27 @@
 
 #define libname "XFC [PROS]"
 #define shortlibname "XFC"
-#define botname "Jumbo"
-#define gamename "Pushback"
+#define botname "Anita Job"
+#define gamename "Override"
 
 #define scr_width 480
 #define scr_height 240
 #define scr_height_full ( scr_height + 32 )
+
+#define MGLeft1Port 1
+#define MGLeft2Port 2
+#define MGLeft3Port 3
+
+#define MGRight1Port 6
+#define MGRight2Port 8
+#define MGRight3Port 9
+
+#define IMUPort 11
+
+// NOT SET UP
+#define HorizTrackingPort 13
+
+#define VertTrackingPort 20
 
 namespace xfc
 {

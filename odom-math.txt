@@ -1,0 +1,26 @@
+Odom Math & Tracking order of events
+
+1. Get current encoder values
+	Let eCL = encoder left
+	Let eCR = encoder right
+	Let eCS = encoder centre
+
+2. Get previous encoder values
+	Let ePL = encover prev left
+	Let ePR = encoder prev right
+	Let ePS = encoder prev centre
+
+3. Calculate change in encoder values (inches)
+	Let wR = wheel radius (inches)
+	Let wD = travel distance (degrees) [current rotation - prev rotation]
+	Let ΔW = ( wD * ( Pi / 180 ) ) * wR
+
+	Repeat for all 3 tracking wheels - ΔL, ΔR, ΔS
+
+4. Update previous encoder values to current values
+	ePL = eCL
+	ePR = eCR
+	ePS = eCS
+
+5. Calculate total change in encoder values since last reset
+	

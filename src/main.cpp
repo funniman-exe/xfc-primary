@@ -1,8 +1,8 @@
 // ------------------------------------------------------------- //
 //           XFC ( eXtra Featured Comp-project ) PROS            //
-//   Designed for the Vex V5 Competition Season of 2025 - 2026   //
+//   Designed for the Vex V5 Competition Season of 2026 - 2027   //
 //                Written by funniman.exe (c) 2026               //
-//                  Lasted updated - 18/12/2025                  //
+//                  Lasted updated - 20/10/2026                  //
 // ------------------------------------------------------------- //
 
 #include "main.h"
@@ -16,10 +16,10 @@ namespace xfc
 
 		fc_log( logTypes::Debug, false, true, __func__, "Begin Program\n" );
 
+		// fc_log( logTypes::ERROR, true, false, __func__, "TEST\n" );
+		
 		if ( !globals::g_cMaster->is_connected() )
-		{
 			fc_log( logTypes::Warning, false, true, __func__, "Master controller not detected.\n        Please sync the Master controller.\n" );
-		}
 
 		if ( !globals::g_cSlave->is_connected() )
 		{
@@ -33,7 +33,7 @@ namespace xfc
 
 	void fc_shutdown()
 	{
-		pros::lcd::clear();
+		//pros::lcd::clear();
 		//pros::screen::erase();
 
 		fc_log( logTypes::Info, false, false, __func__, shortlibname " Shutdown: Thank you for using " libname "\n" );
@@ -85,7 +85,6 @@ namespace xfc
  */
 void disabled()
 {
-	static int loadingAnimCounter = 0;
 	static bool disabled = false;
 
 	if ( !disabled )

@@ -1,7 +1,9 @@
-#include "__use_lemlib.h"
+//#include "__use_lemlib.h"
 
 #include "pros.h"
 #include "fc_globls.h"
+
+#define HORIZ_DRIFT 2
 
 namespace xfc
 {
@@ -26,8 +28,8 @@ namespace xfc
         pros::Controller *g_cSlave = nullptr;
 
         // Motors -- negitive numbers denote reversed motors
-        pros::MotorGroup g_mgLeft( { -19, -20 }, pros::MotorGearset::green );
-        pros::MotorGroup g_mgRight( { 16, 17 }, pros::MotorGearset::green );
+        pros::MotorGroup g_mgLeft( { MGLeft1Port, -MGLeft2Port, MGLeft3Port }, pros::MotorGearset::green );
+        pros::MotorGroup g_mgRight( { -MGRight1Port, MGRight2Port, -MGRight3Port }, pros::MotorGearset::green );
 
         pros::MotorGroup g_mgGantry( { 2, -18 }, pros::MotorGearset::blue );
 
@@ -45,18 +47,18 @@ namespace xfc
 
 #ifdef __XFC_USE_LEMLIB
         // LemLib Stuff
-        lemlib::Drivetrain g_dDrivetrain( &g_mgLeft, &g_mgRight, 12.25, lemlib::Omniwheel::NEW_325, 360, 2 );
+        lemlib::Drivetrain g_dDrivetrain( &g_mgLeft, &g_mgRight, 12.25, lemlib::Omniwheel::NEW_325, 360, HORIZ_DRIFT );
 
-        pros::Imu g_iImu( 12 );
-        pros::Rotation g_eHoriz( 13 );
-        pros::Rotation g_eVert( 14 );
+        pros::Imu g_iImu( IMUPort );
+        // pros::Rotation g_eHoriz( HorizTrackingPort );
+        pros::Rotation g_eVert( VertTrackingPort );
 
-        lemlib::TrackingWheel g_tHorizTrackingWheel( &g_eHoriz, lemlib::Omniwheel::NEW_275, -2.5 );
-        lemlib::TrackingWheel g_tVertTrackingWheel( &g_eVert, lemlib::Omniwheel::NEW_275, -2.5 );
+        // lemlib::TrackingWheel g_tHorizTrackingWheel( &g_eHoriz, lemlib::Omniwheel::NEW_275, -2.5 );
+        lemlib::TrackingWheel g_tVertTrackingWheel( &g_eVert, lemlib::Omniwheel::NEW_275, -7.25 );
 
-        lemlib::OdomSensors g_sSensors( &g_tVertTrackingWheel, nullptr, &g_tHorizTrackingWheel, nullptr, &g_iImu );
+        lemlib::OdomSensors g_sSensors( &g_tVertTrackingWheel, nullptr, nullptr, nullptr, &g_iImu );
 
-        lemlib::ControllerSettings g_pidConLateral(10, // proportional gain (kP)
+        lemlib::ControllerSettings g_pidConLateral( 10, // proportional gain (kP)
                                                     0, // integral gain (kI)
                                                     3, // derivative gain (kD)
                                                     3, // anti windup
@@ -67,7 +69,7 @@ namespace xfc
                                                     20 // maximum acceleration (slew)
         );
 
-        lemlib::ControllerSettings g_pidConAngular(2, // proportional gain (kP)
+        lemlib::ControllerSettings g_pidConAngular( 2, // proportional gain (kP)
                                                     0, // integral gain (kI)
                                                     10, // derivative gain (kD)
                                                     3, // anti windup

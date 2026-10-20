@@ -181,9 +181,8 @@ namespace xfc
 	/// @brief Input Manager Initialization
 	void fc_initInput()
 	{
-#ifdef __XFC_USE_LEMLIB
-		globals::g_cChassis.calibrate();
-#endif
+		fc_log( logTypes::Debug, false, true, __func__, "Input library started initializing\n" );
+		
 		globals::g_cMaster = new pros::Controller( pros::E_CONTROLLER_MASTER );
 		globals::g_cSlave = new pros::Controller( pros::E_CONTROLLER_PARTNER );
 
@@ -193,6 +192,8 @@ namespace xfc
 		globals::g_pMatchload.set_value( 0 );
 		globals::g_pDeload.set_value( 0 );
 		globals::g_pParking.set_value( 0 );
+
+		fc_log( logTypes::Debug, false, true, __func__, "Input library finished initializing\n" );
 	}
 
 	/// @brief Input Manager Destructor
@@ -203,6 +204,13 @@ namespace xfc
 
 		globals::g_cMaster = NULL;
 		globals::g_cSlave = NULL;
+	}
+
+	bool fc_checkSmartDeviceInstalled( uint8_t port )
+	{
+		pros::DeviceType tempType = pros::Device::get_plugged_type( port );
+
+		return ( tempType != pros::DeviceType::none );
 	}
 }
 

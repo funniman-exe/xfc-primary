@@ -51,13 +51,13 @@ namespace xfc {
         int m_iColChanged;
     }
 
-    #define brainMaxLines 8
+    #define brainMaxLines 10
     #define controllerMaxLines 3
 
     std::string brainConsole;
 
-    std::string brainLogConsole[ brainMaxLines ];
-    std::string controllerLogConsole[ controllerMaxLines ];
+    std::string* brainLogConsole;
+    std::string* controllerLogConsole;
     lv_obj_t *container = nullptr;
     lv_obj_t *text = nullptr;
 
@@ -66,16 +66,17 @@ namespace xfc {
     void fc_log_visInit()
     {
         container = lv_obj_create( globals::g_tTabCon );
-        lv_obj_set_size( container, scr_width, scr_height );
+        lv_obj_set_size( container, 440, 180 );
         //lv_obj_set_width( container, LV_SIZE_CONTENT );
         //lv_obj_set_height( container, LV_SIZE_CONTENT );
         lv_obj_set_scroll_dir( container, LV_DIR_VER );
         lv_obj_set_style_pad_all( container, 5, LV_PART_MAIN );
 
         text = lv_label_create( container );
-        lv_obj_set_width( text, lv_pct( 100 ) );
         lv_label_set_long_mode( text, LV_LABEL_LONG_WRAP );
-        lv_obj_set_height( text, LV_SIZE_CONTENT );
+        lv_obj_set_width( text, lv_pct( 100 ) );
+        lv_obj_set_height( text, lv_pct( 100 ) );
+        lv_obj_set_scroll_dir( text, LV_DIR_NONE );
         lv_label_set_recolor( text, true );
         lv_label_set_text( text, "" );
     }
@@ -87,6 +88,9 @@ namespace xfc {
         fc_logProperties::m_iCurrControllerLine = 0;
         fc_logProperties::m_iCurrControllerCol = 0;
         fc_logProperties::m_iColChanged = 0;
+
+        brainLogConsole = new std::string[ brainMaxLines ];
+        controllerLogConsole = new std::string[ controllerMaxLines ];
 
         //pros::screen::erase();
         //pros::lcd::clear();
@@ -127,6 +131,9 @@ namespace xfc {
         fc_logProperties::m_iCurrControllerCol = 0;
         fc_logProperties::m_iColChanged = 0;
 
+        delete[] brainLogConsole;
+        delete[] controllerLogConsole;
+
         logInit = false;
     }
 
@@ -145,12 +152,14 @@ namespace xfc {
     void fc_tab_to_console()
     {
         lv_obj_clear_flag( globals::g_tTabBtns, LV_OBJ_FLAG_HIDDEN );
-        lv_obj_scroll_to_view_recursive( container, LV_ANIM_ON );
+        //lv_obj_scroll_to_view_recursive( container, LV_ANIM_ON );
+        lv_obj_scroll_to_view_recursive( globals::g_tTabCon, LV_ANIM_ON );
     }
 
     void fc_scroll_to_console()
     {
-        lv_obj_scroll_to_view_recursive( container, LV_ANIM_OFF );
+        //lv_obj_scroll_to_view_recursive( container, LV_ANIM_OFF );
+        lv_obj_scroll_to_view_recursive( globals::g_tTabCon, LV_ANIM_OFF );
     }
 
     void __fc_log_print( const char *str, bool sendToBrain, bool sendToController, bool isFatal )
@@ -161,7 +170,7 @@ namespace xfc {
             if ( isFatal ) brainLogConsole[ fc_logProperties::m_iCurrLine ] += "    ";
             brainLogConsole[ fc_logProperties::m_iCurrLine ] += str;
 
-            fc_update_console();
+            //fc_update_console();
 
             //std::cout << "DBG: printing string \"" << brainLogConsole[ fc_logProperties::m_iCurrLine ] << "\" to brain screen on line" << fc_logProperties::m_iCurrLine << ";;;;;";
 
@@ -200,7 +209,7 @@ namespace xfc {
 
                     if ( sendToBrain )
                     {
-                        if ( ++fc_logProperties::m_iCurrLine >= brainMaxLines )
+                        if ( fc_logProperties::m_iCurrLine + 1 >= brainMaxLines )
                         {
                             for ( int i = 0; i < brainMaxLines - 1; ++i )
                             {
@@ -209,15 +218,17 @@ namespace xfc {
 
                             brainLogConsole[ brainMaxLines - 1 ] = "";
                         }
+                        else
+                            ++fc_logProperties::m_iCurrLine;
 
                         brainLogConsole[ fc_logProperties::m_iCurrLine ] += prevCol;
 
-                        fc_update_console();
+                        //fc_update_console();
                     }
 
                     if ( sendToController )
                     {
-                        if ( ++fc_logProperties::m_iCurrControllerLine >= controllerMaxLines )
+                        if ( fc_logProperties::m_iCurrControllerLine + 1 >= controllerMaxLines )
                         {
                             for ( int i = 0; i < controllerMaxLines - 1; i++ )
                             {
@@ -226,6 +237,8 @@ namespace xfc {
 
                             controllerLogConsole[ controllerMaxLines - 1 ] = "";
                         }
+                        else
+                            ++fc_logProperties::m_iCurrControllerLine;
                     }
 
                     std::cout << std::endl;
@@ -251,7 +264,15 @@ namespace xfc {
     char* vsprintf_wrapper( const char* fmt, va_list va )
     {
         // kinda horrible, but i'm not sure if there's a better way
-        char* tmp = new char[ sizeof( fmt ) + 256 ];
+        //char* tmp = new char[ sizeof( fmt ) + 256 ];
+
+        // hello past oscar, i have found a better way:
+        va_list va_copy;
+        va_copy( va_copy, va );
+        const int len = vsnprintf( nullptr, 0, fmt, va_copy );
+        va_end( va_copy );
+
+        char* tmp = new char[ len + 1 ];
         vsprintf( tmp, fmt, va );
 
         return tmp;
@@ -267,7 +288,15 @@ namespace xfc {
         va_start( args, fmt );
 
         // kinda horrible, but i'm not sure if there's a better way
-        char* tmp = new char[ sizeof( fmt ) + 256 ];
+        //char* tmp = new char[ sizeof( fmt ) + 256 ];
+
+        // hello past oscar, i have found a better way:
+        va_list va_copy;
+        va_copy( va_copy, args );
+        const int len = vsnprintf( nullptr, 0, fmt, va_copy );
+        va_end( va_copy );
+
+        char* tmp = new char[ len + 1 ];
         vsprintf( tmp, fmt, args );
 
         va_end( args );
@@ -354,9 +383,9 @@ namespace xfc {
 
                 //pros::lcd::set_text( fc_logProperties::m_iCurrLine, brainLogConsole[ fc_logProperties::m_iCurrLine ] );
                 //pros::screen::print( fc_logProperties::m_iTextFmt, fc_logProperties::m_iCurrLine, "<%s - %s>: ", logTypeNames[type], loc );
-                //lv_label_set_text_fmt( text, "<%s - %s>: ", logTypeNames[type], loc );
+                //lv_label_set_text_fmt( text, "<%s - %s>: \0", logTypeNames[type], loc );
 
-                fc_update_console();
+                //fc_update_console();
             }
             
             std::cout << prefix.c_str();
@@ -385,7 +414,7 @@ namespace xfc {
             brainLogConsole[ 6 ] = "";
             brainLogConsole[ 7 ] = "";
 
-            fc_update_console();
+            //fc_update_console();
 
             //pros::lcd::set_text( 6, "Details: " );
             //pros::screen::print( pros::text_format_e_t::E_TEXT_MEDIUM, 0, "X(" );
@@ -405,8 +434,8 @@ namespace xfc {
 
         va_list args;
         va_start( args, fmt );
-
         const char* input = vsprintf_wrapper( fmt, args );
+        va_end( args );
 
         //__fc_log_parse( ( type == logTypes::FATAL ), sendToBrain, sendToController, fmt, args );
         __fc_log_process( ( type == logTypes::FATAL ), sendToBrain, sendToController, input );
@@ -414,7 +443,8 @@ namespace xfc {
         delete[] input;
         input = nullptr;
 
-        va_end( args );
+        // reduced calls to fc_update_console() to just this one
+        fc_update_console();
 
         if ( type == logTypes::FATAL )
         {
@@ -428,8 +458,9 @@ namespace xfc {
 
         if ( sendToBrain )
         {
-        //    pros::screen::set_pen( pros::Color::white );
+        //  pros::screen::set_pen( pros::Color::white );
             brainLogConsole[ fc_logProperties::m_iCurrLine ] += "#";
+        //  brainLogConsole[ fc_logProperties::m_iCurrLine ] += prevCol;
             strcpy( prevCol, "\0\0\0\0\0\0\0\0" );
         }
 

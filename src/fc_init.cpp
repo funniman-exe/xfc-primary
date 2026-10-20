@@ -1,17 +1,27 @@
 #include "main.h"
 
+#define TABBER_VISIBLE_ON_START
+
 LV_IMG_DECLARE( SCARY );
 
 namespace xfc
 {
+	void fc_vis_setupMain()
+	{
+		lv_obj_t *iTabMain_CentrePiece = lv_img_create( globals::g_tTabMain );
+		lv_img_set_src( iTabMain_CentrePiece, &SCARY );
+	}
+
 	void fc_vis_init()
 	{
 		// creates tabber and tab buttons
 		globals::g_tTabber = lv_tabview_create( lv_scr_act(), LV_DIR_TOP, 10 );
 		globals::g_tTabBtns = lv_tabview_get_tab_btns( globals::g_tTabber );
 
+#ifndef TABBER_VISIBLE_ON_START
 		// make buttons invisible by default
 		lv_obj_add_flag( globals::g_tTabBtns, LV_OBJ_FLAG_HIDDEN );
+#endif
 
 		// styling
 		lv_obj_set_style_bg_color( globals::g_tTabBtns, lv_palette_darken( LV_PALETTE_GREY, 3 ), 0 );
@@ -26,10 +36,8 @@ namespace xfc
 
 		lv_obj_clear_flag( lv_tabview_get_content( globals::g_tTabber ), LV_OBJ_FLAG_SCROLLABLE );
 
-		fc_scroll_to_console();
-
-		lv_obj_t *iTabMain_CentrePiece = lv_img_create( globals::g_tTabMain );
-		lv_img_set_src( iTabMain_CentrePiece, &SCARY );
+		// fc_scroll_to_console();
+		fc_vis_setupMain();
 	}
 }
 
@@ -47,10 +55,43 @@ void initialize()
 	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "Hewwo :3 I am " botname "!!!\n" );
 	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "-- Welcome to " libname " (configured for " gamename ") --\n" );
 	//fc_log( logTypes::Info, false, false, __func__, "ich bin das krankenhaus" );
-	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "  (c) 2025 funniman.exe\n" );
+	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "  (c) 2026 funniman.exe\n" );
 	xfc::fc_log( xfc::logTypes::Debug, false, true, __func__, "Init Start\n" );
 
 	pros::Task batteryLoop( xfc::fc_batteryLoop );
+
+	bool okToCalibrate = xfc::fc_checkSmartDeviceInstalled( IMUPort );
+
+	if ( okToCalibrate )
+	{
+		xfc::fc_log( xfc::logTypes::Debug, false, true, __func__, "Calibrating IMU...\n" );
+		xfc::globals::g_iImu.reset();
+
+		while ( xfc::globals::g_iImu.is_calibrating() ) { pros::delay( 20 ); }
+
+		xfc::fc_log( xfc::logTypes::Info, false, true, __func__, "IMU finished calibrating\n" );
+
+#ifdef __XFC_USE_LEMLIB
+		okToCalibrate = xfc::fc_checkSmartDeviceInstalled( MGLeft1Port );
+		okToCalibrate &= xfc::fc_checkSmartDeviceInstalled( MGLeft2Port );
+		okToCalibrate &= xfc::fc_checkSmartDeviceInstalled( MGLeft3Port );
+		okToCalibrate &= xfc::fc_checkSmartDeviceInstalled( MGRight1Port );
+		okToCalibrate &= xfc::fc_checkSmartDeviceInstalled( MGRight2Port );
+		okToCalibrate &= xfc::fc_checkSmartDeviceInstalled( MGRight3Port );
+		okToCalibrate &= xfc::fc_checkSmartDeviceInstalled( VertTrackingPort );
+
+		if ( okToCalibrate )
+		{
+			xfc::fc_log( xfc::logTypes::Debug, false, true, __func__, "Calibrating LemLib Chassis...\n" );
+			xfc::globals::g_cChassis.calibrate();
+		}
+		else
+			xfc::fc_log( xfc::logTypes::Warning, false, true, __func__, "Skipping LemLib Calibration (some components not installed)\n" );
+#endif
+	}
+	else
+		xfc::fc_log( xfc::logTypes::Warning, false, true, __func__, "Skipping IMU Calibration (not installed)\n" );
+	
 	xfc::fc_initInput();
 
 	xfc::fc_startup();
