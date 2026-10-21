@@ -28,8 +28,21 @@
 
 namespace xfc
 {
+    enum GAMESTATE
+    {
+        E_GAMESTATE_NULL = -1,
+        E_GAMESTATE_DISABLED = 0,
+        E_GAMESTATE_INIT,
+        E_GAMESTATE_SHUTDOWN,
+        E_GAMESTATE_COMPINIT,
+        E_GAMESTATE_AUTON,
+        E_GAMESTATE_DRIVER
+    };
+
     namespace globals
     {
+        extern int8_t g_iGameState; // Gamestate (use GAMESTATE enum)
+
         // UI Stuff
         extern lv_obj_t *g_tTabber; // LVGL Tabber
         extern lv_obj_t *g_tTabBtns; // LVGL Tabber (Buttons)
@@ -38,8 +51,8 @@ namespace xfc
         extern lv_obj_t *g_tTabCon; // LVGL Console Tab
 
         // Match config options
-        extern int g_bIsSkillsMatch;
-        extern int g_bIsOnLeft;
+        extern bool g_bIsSkillsMatch;
+        extern bool g_bIsOnLeft;
         extern bool g_bAutonEnabled;
 
         extern bool g_bIsCompetitionMatch;

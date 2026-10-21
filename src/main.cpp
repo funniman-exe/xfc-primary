@@ -85,12 +85,10 @@ namespace xfc
  */
 void disabled()
 {
-	static bool disabled = false;
-
-	if ( !disabled )
+	if ( xfc::globals::g_iGameState != xfc::E_GAMESTATE_DISABLED )
 	{
 		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "NEW STATE: DISABLED" );
-		disabled = true;
+		xfc::globals::g_iGameState = xfc::E_GAMESTATE_DISABLED;
 	}
 
 	pros::delay( 625 );

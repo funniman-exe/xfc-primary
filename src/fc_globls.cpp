@@ -9,6 +9,8 @@ namespace xfc
 {
     namespace globals
     {
+        int8_t g_iGameState = E_GAMESTATE_NULL;
+
         // UI Stuff
         lv_obj_t *g_tTabber = nullptr;
         lv_obj_t *g_tTabBtns = nullptr;
@@ -17,8 +19,8 @@ namespace xfc
         lv_obj_t *g_tTabCon = nullptr;
 
         // Match config options
-        int g_bIsSkillsMatch = false;
-        int g_bIsOnLeft = true;
+        bool g_bIsSkillsMatch = false;
+        bool g_bIsOnLeft = true;
         bool g_bAutonEnabled = true;
 
         bool g_bIsCompetitionMatch = false;
@@ -28,8 +30,8 @@ namespace xfc
         pros::Controller *g_cSlave = nullptr;
 
         // Motors -- negitive numbers denote reversed motors
-        pros::MotorGroup g_mgLeft( { MGLeft1Port, -MGLeft2Port, MGLeft3Port }, pros::MotorGearset::green );
-        pros::MotorGroup g_mgRight( { -MGRight1Port, MGRight2Port, -MGRight3Port }, pros::MotorGearset::green );
+        pros::MotorGroup g_mgLeft( { MGLeft1Port, -MGLeft2Port, MGLeft3Port }, pros::MotorGearset::blue );
+        pros::MotorGroup g_mgRight( { -MGRight1Port, MGRight2Port, -MGRight3Port }, pros::MotorGearset::blue );
 
         pros::MotorGroup g_mgGantry( { 2, -18 }, pros::MotorGearset::blue );
 

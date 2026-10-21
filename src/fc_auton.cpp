@@ -194,6 +194,12 @@ void auton_right()
  */
 void autonomous()
 {
+	if ( xfc::globals::g_iGameState != xfc::E_GAMESTATE_AUTON )
+	{
+		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "NEW STATE: AUTON" );
+		xfc::globals::g_iGameState = xfc::E_GAMESTATE_AUTON;
+	}
+
 	if ( !xfc::globals::g_bAutonEnabled )
 		auton_dummy();
 	else if ( xfc::globals::g_bIsSkillsMatch )

@@ -49,6 +49,12 @@ namespace xfc
  */
 void initialize()
 {
+	if ( xfc::globals::g_iGameState != xfc::E_GAMESTATE_INIT )
+	{
+		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "NEW STATE: INIT" );
+		xfc::globals::g_iGameState = xfc::E_GAMESTATE_INIT;
+	}
+	
 	xfc::fc_vis_init();
 	xfc::fc_log_init();
 
@@ -100,6 +106,12 @@ void initialize()
 /// @brief Runs destruction/deinitialization code. Cleans up variables.
 void destruct()
 {
+	if ( xfc::globals::g_iGameState != xfc::E_GAMESTATE_SHUTDOWN )
+	{
+		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "NEW STATE: SHUTDOWN" );
+		xfc::globals::g_iGameState = xfc::E_GAMESTATE_SHUTDOWN;
+	}
+
 	xfc::fc_shutdown();
 	
 	xfc::fc_deinitInput();
@@ -177,6 +189,12 @@ void llemu_switch_side()
  */
 void competition_initialize()
 {
+	if ( xfc::globals::g_iGameState != xfc::E_GAMESTATE_COMPINIT )
+	{
+		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "NEW STATE: COMPETITION INIT" );
+		xfc::globals::g_iGameState = xfc::E_GAMESTATE_COMPINIT;
+	}
+
 	xfc::globals::g_bIsCompetitionMatch = true;
 
 	/*pros::lcd::register_btn0_cb( llemu_switch_side );
