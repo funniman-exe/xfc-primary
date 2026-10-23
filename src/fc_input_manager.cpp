@@ -57,8 +57,12 @@ namespace xfc
 	#define targetGantryVoltage 127
 	#define targetOutputVoltage 127
 
+	#define gantryLowestDegrees 180
+	#define gantryHighestDegrees 100
+
+	#define gantryLimitFormula( limitInitial, limitFinal ) static_cast<double>( targetGantryVoltage ) * std::min( static_cast<double>( 1 ), ( static_cast<double>( limitFinal ) - ( static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 ) ) ) / ( static_cast<double>( limitFinal ) - static_cast<double>( limitInitial ) ) )
 	/// @brief INTERNAL
-	void fc_updateIntake()
+	void fc_updateGantry()
 	{
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
@@ -69,19 +73,22 @@ namespace xfc
 		if ( globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
 		{
-			globals::g_mgGantry.move( targetGantryVoltage );
+			globals::g_mgGantry.move( gantryLimitFormula( gantryHighestDegrees, gantryLowestDegrees ) );
 		}
 
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
 		{
-			globals::g_mgGantry.move( -targetGantryVoltage );
+			globals::g_mgGantry.move( 0 - ( gantryLimitFormula( gantryLowestDegrees, gantryHighestDegrees ) ) );
 		}
+
+		std::cout << gantryLimitFormula( gantryHighestDegrees, gantryLowestDegrees ) << std::endl;
 	}
 
 	/// @brief INTERNAL
 	void fc_updateOutput()
 	{
+		/*
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_L1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_L2 ) )
 		{
@@ -102,11 +109,13 @@ namespace xfc
 			//globals::g_mgOutput.move( -targetOutputVoltage );
 			globals::g_mOutput.move( -targetOutputVoltage );
 		}
+		*/
 	}
 
 	/// @brief INTERNAL
 	void fc_updateSolenoids()
 	{
+		/*
 		// Matchload
 		bool currMatchload = globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_A );
 
@@ -167,13 +176,14 @@ namespace xfc
 		{
 			parkingPressed = false;			
 		}
+		*/
 	}
 
 	/// @brief Controller update routine
 	void fc_updateControls()
 	{
 		fc_updateArcade();
-		fc_updateIntake();
+		fc_updateGantry();
 		fc_updateOutput();
 		fc_updateSolenoids();
 	}
@@ -189,9 +199,11 @@ namespace xfc
 		globals::g_cMaster->clear();
         globals::g_cSlave->clear();
 
-		globals::g_pMatchload.set_value( 0 );
-		globals::g_pDeload.set_value( 0 );
-		globals::g_pParking.set_value( 0 );
+		globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+
+		//globals::g_pMatchload.set_value( 0 );
+		//globals::g_pDeload.set_value( 0 );
+		//globals::g_pParking.set_value( 0 );
 
 		fc_log( logTypes::Debug, false, true, __func__, "Input library finished initializing\n" );
 	}

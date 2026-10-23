@@ -19,6 +19,11 @@
 #define MGRight2Port 8
 #define MGRight3Port 9
 
+#define MGGantry1Port 13
+#define MGGantry2Port 14
+
+#define GantryTrackingPort 19
+
 #define IMUPort 11
 
 // NOT SET UP
@@ -41,7 +46,7 @@ namespace xfc
 
     namespace globals
     {
-        extern int8_t g_iGameState; // Gamestate (use GAMESTATE enum)
+        extern int g_iGameState; // Gamestate (use GAMESTATE enum)
 
         // UI Stuff
         extern lv_obj_t *g_tTabber; // LVGL Tabber
@@ -65,29 +70,19 @@ namespace xfc
         extern pros::MotorGroup g_mgLeft; // Drivetrain Left Motorgroup
         extern pros::MotorGroup g_mgRight; // Drivetrain Right Motorgroup
 
-        extern pros::MotorGroup g_mgGantry; // Gantry Motorgroup
+        extern pros::MotorGroup g_mgGantry; // Pin Gantry Motorgroup
 
-        //extern pros::MotorGroup g_mgOutput; // Output Motorgroup
-        extern pros::Motor g_mOutput; // Output Motor
-
-        // Digital IO
-        extern pros::adi::DigitalOut g_pParking; // Parking Pneumatics
-        extern pros::adi::DigitalOut g_pMatchload; // Matchload Pneumatics
-
-        extern pros::adi::Button g_sParkingSwitchA; // Parking Switch A
-        extern pros::adi::Button g_sParkingSwitchB; // Parking Switch B
-
-        extern pros::adi::DigitalOut g_pDeload; // Deload Pneumatics
+        extern pros::Rotation g_eGantryMonitor; // Pin Gantry Rotation Sensor
 
 #ifdef __XFC_USE_LEMLIB
         // LemLib Stuff
         extern lemlib::Drivetrain g_dDrivetrain; // Drivetrain
 
         extern pros::Imu g_iImu; // PID IMU 
-        extern pros::Rotation g_eHoriz; // PID Horizontal Rotation Sensor
-        extern pros::Rotation g_eVert; // PID Vertical Rotation Sensory
+        // extern pros::Rotation g_eHoriz; // PID Horizontal Rotation Sensor
+        extern pros::Rotation g_eVert; // PID Vertical Rotation Sensor
 
-        extern lemlib::TrackingWheel g_tHorizTrackingWheel; // PID Horizontal Tracking Wheel
+        // extern lemlib::TrackingWheel g_tHorizTrackingWheel; // PID Horizontal Tracking Wheel
         extern lemlib::TrackingWheel g_tVertTrackingWheel; // PID Vertical Tracking Wheel
 
         extern lemlib::OdomSensors g_sSensors; // PID Odom Sensors

@@ -48,15 +48,15 @@ namespace xfc
  * to keep execution time for this mode under a few seconds.
  */
 void initialize()
-{
+{	
+	xfc::fc_vis_init();
+	xfc::fc_log_init();
+
 	if ( xfc::globals::g_iGameState != xfc::E_GAMESTATE_INIT )
 	{
 		xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "NEW STATE: INIT" );
 		xfc::globals::g_iGameState = xfc::E_GAMESTATE_INIT;
 	}
-	
-	xfc::fc_vis_init();
-	xfc::fc_log_init();
 
 	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "Hewwo :3 I am " botname "!!!\n" );
 	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "-- Welcome to " libname " (configured for " gamename ") --\n" );

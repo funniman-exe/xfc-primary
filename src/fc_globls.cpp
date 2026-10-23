@@ -9,7 +9,7 @@ namespace xfc
 {
     namespace globals
     {
-        int8_t g_iGameState = E_GAMESTATE_NULL;
+        int g_iGameState = E_GAMESTATE_NULL;
 
         // UI Stuff
         lv_obj_t *g_tTabber = nullptr;
@@ -33,19 +33,9 @@ namespace xfc
         pros::MotorGroup g_mgLeft( { MGLeft1Port, -MGLeft2Port, MGLeft3Port }, pros::MotorGearset::blue );
         pros::MotorGroup g_mgRight( { -MGRight1Port, MGRight2Port, -MGRight3Port }, pros::MotorGearset::blue );
 
-        pros::MotorGroup g_mgGantry( { 2, -18 }, pros::MotorGearset::blue );
+        pros::MotorGroup g_mgGantry( { -MGGantry1Port, MGGantry2Port }, pros::MotorGearset::red );
 
-        //pros::MotorGroup g_mgOutput( { 15, 3 }, pros::MotorGearset::blue );
-        pros::Motor g_mOutput( 15, pros::MotorGearset::blue );
-
-        // Digital IO
-        pros::adi::DigitalOut g_pParking = pros::adi::DigitalOut( 1, false );
-        pros::adi::DigitalOut g_pMatchload = pros::adi::DigitalOut( 2, false );
-
-        pros::adi::Button g_sParkingSwitchA = pros::adi::Button( 3 );
-        pros::adi::Button g_sParkingSwitchB = pros::adi::Button( 4 );
-
-        pros::adi::DigitalOut g_pDeload = pros::adi::DigitalOut( 5, false );
+        pros::Rotation g_eGantryMonitor( GantryTrackingPort );
 
 #ifdef __XFC_USE_LEMLIB
         // LemLib Stuff
