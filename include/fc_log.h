@@ -12,6 +12,18 @@ namespace xfc {
 
     void fc_scroll_to_console();
 
+	/// @brief wrapper for vsprintf
+    /// @param fmt format string
+    /// @param va variable argument list
+    /// @returns const char* containing the formatted string
+    char* vsprintf_wrapper( const char* fmt, va_list va );
+
+	/// @brief A wrapper for sprintf
+    /// @param fmt Format String
+    /// @param ... Variable Arguments
+    /// @returns const char* containing the formatted string
+    char* cFmt( const char* fmt, ... );
+
     /// @brief XFC's custom logging function
     /// @param type Type of log (see the logTypes enum)
     /// @param sendToController Should this log be printed on the controller?

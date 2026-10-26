@@ -1,4 +1,7 @@
+#include "fc_globls.h"
 #include "main.h"
+#include "pros/motors.h"
+#include <cstdint>
 
 namespace xfc
 {
@@ -54,35 +57,153 @@ namespace xfc
 		}
 	}
 
-	#define targetGantryVoltage 127
-	#define targetOutputVoltage 127
+	#define targetGantryVoltage 96
+	#define targetGantryVoltageDown 32
 
-	#define gantryLowestDegrees 180
-	#define gantryHighestDegrees 100
+	#define gantryLowestDegrees 78
+	#define gantryHighestDegrees 0
 
-	#define gantryLimitFormula( limitInitial, limitFinal ) static_cast<double>( targetGantryVoltage ) * std::min( static_cast<double>( 1 ), ( static_cast<double>( limitFinal ) - ( static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 ) ) ) / ( static_cast<double>( limitFinal ) - static_cast<double>( limitInitial ) ) )
+	/// @brief Formula to slow motor speed near the limit of the motor range
+	/// @param maxVoltage uint8_t voltage to pass to motors (clamped to a range from 0 to 127)
+	/// @param minVoltage uint8_t voltage to pass to motors (clamped to a range from 0 to 127)
+	/// @param limitInitial degrees of encoder to begin enforcing speed decrease
+	/// @param limitFinal degrees of encoder defining the absolute limit of the motor position
+	/// @return adjusted motor voltage (clamped to a range from minVoltage to maxVoltage)
+	double fc_gantryLimitFormula( uint8_t maxVoltage, uint8_t minVoltage, double limitInitial, double limitFinal )
+	{
+		// clamp voltages
+		maxVoltage = std::max( static_cast<uint8_t>( 0 ), std::min( static_cast<uint8_t>( 127 ), maxVoltage ) );
+		minVoltage = std::max( static_cast<uint8_t>( 0 ), std::min( static_cast<uint8_t>( 127 ), minVoltage ) );
+
+		// angle returned by get_angle() is represented in centidegrees, we must convert it to standard degrees
+		double angle = static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 );
+
+		// the actual formula
+		double result = ( limitFinal - angle ) / ( limitFinal - limitInitial );
+
+		// converting the formula to voltage, and clamping the result
+		return std::max( static_cast<double>( minVoltage ), static_cast<double>( maxVoltage ) * std::min( static_cast<double>( 1 ), result ) );
+	}
+	
 	/// @brief INTERNAL
 	void fc_updateGantry()
 	{
+		static int8_t lastMoveDir = 0;
+		static double lastMovingAngle = 0;
+
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
 		{
-			globals::g_mgGantry.brake();
+			if ( lastMovingAngle == 0 )
+				lastMovingAngle = static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 );
+
+			double angle = static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 );
+
+			if ( lastMoveDir > 0 )
+			{
+				if ( angle > 0 && lastMoveDir < 0 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle >= 19.4 && lastMoveDir <= 19.4 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle >= 33.75 && lastMoveDir <= 33.75 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle >= 48.4 && lastMoveDir <= 48.4 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle >= 60.8 && lastMoveDir <= 60.8 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle >= 73.2 && lastMoveDir <= 73.2 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+			}
+			else if ( lastMoveDir < 0 )
+			{
+				if ( angle < 73.2 && lastMoveDir > 73.2 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle <= 60.8 && lastMoveDir >= 60.8 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle <= 48.4 && lastMoveDir >= 48.4 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle <= 33.75 && lastMoveDir >= 33.75 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle <= 19.4 && lastMoveDir >= 19.4 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+				else if ( angle <= 0 && lastMoveDir >= 0 )
+				{
+					globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+					globals::g_mgGantry.brake();
+				}
+			}
 		}
 
 		if ( globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
 		{
-			globals::g_mgGantry.move( gantryLimitFormula( gantryHighestDegrees, gantryLowestDegrees ) );
+			lastMoveDir = 1;
+			lastMovingAngle = 0;
+
+			if ( ( static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 ) ) < 80 )
+			{
+				// globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+				globals::g_mgGantry.move( fc_gantryLimitFormula( targetGantryVoltage, 0, 55, gantryHighestDegrees ) );
+			}
+			else
+			 {
+				globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_COAST );
+				globals::g_mgGantry.brake();
+			 }
 		}
 
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
 		{
-			globals::g_mgGantry.move( 0 - ( gantryLimitFormula( gantryLowestDegrees, gantryHighestDegrees ) ) );
+			lastMoveDir = -1;
+			lastMovingAngle = 0;
+
+			if ( ( static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 ) ) < 40 )
+			{
+				globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_COAST );
+				globals::g_mgGantry.brake();
+			}
+			else
+			{
+				// globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+				globals::g_mgGantry.move( 0 - ( fc_gantryLimitFormula( targetGantryVoltageDown, 0, 57, gantryLowestDegrees ) ) );
+			}
 		}
 
-		std::cout << gantryLimitFormula( gantryHighestDegrees, gantryLowestDegrees ) << std::endl;
+		std::cout << fc_gantryLimitFormula( targetGantryVoltage, 0, 40, gantryHighestDegrees ) << std::endl;
 	}
 
 	/// @brief INTERNAL
@@ -199,7 +320,7 @@ namespace xfc
 		globals::g_cMaster->clear();
         globals::g_cSlave->clear();
 
-		globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_HOLD );
+		globals::g_mgGantry.set_brake_mode( pros::E_MOTOR_BRAKE_COAST );
 
 		//globals::g_pMatchload.set_value( 0 );
 		//globals::g_pDeload.set_value( 0 );
@@ -245,9 +366,10 @@ void opcontrol()
 
 	while ( true )
 	{
-		while ( !xfc::globals::g_cMaster->is_connected() ) { pros::delay( 20 ); }
+		if ( xfc::globals::g_cMaster->is_connected() )
+			xfc::fc_updateControls();
 
-		xfc::fc_updateControls();
+		xfc::fc_updateMainScreen();
 		pros::delay( 20 );
 	}
 }

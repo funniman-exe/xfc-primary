@@ -443,15 +443,15 @@ namespace xfc {
         delete[] input;
         input = nullptr;
 
-        // reduced calls to fc_update_console() to just this one
-        fc_update_console();
-
         if ( type == logTypes::FATAL )
         {
+			// reduced calls to fc_update_console() to just this one
+        	fc_update_console();
+
             // kill the program
             while( true )
             {
-                pros::delay( 10 );
+                pros::delay( 200 );
             }
         }
         else if ( type == logTypes::ERROR ) fc_tab_to_console();
@@ -463,6 +463,9 @@ namespace xfc {
         //  brainLogConsole[ fc_logProperties::m_iCurrLine ] += prevCol;
             strcpy( prevCol, "\0\0\0\0\0\0\0\0" );
         }
+
+		// reduced calls to fc_update_console() to just this one
+        fc_update_console();
 
         std::cout << "\033[37m";
     }

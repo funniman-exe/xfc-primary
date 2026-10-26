@@ -1,6 +1,7 @@
 #pragma once
 
 #include "__use_lemlib.h"
+#include "main.h"
 
 #define libname "XFC [PROS]"
 #define shortlibname "XFC"

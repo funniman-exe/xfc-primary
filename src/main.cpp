@@ -2,10 +2,13 @@
 //           XFC ( eXtra Featured Comp-project ) PROS            //
 //   Designed for the Vex V5 Competition Season of 2026 - 2027   //
 //                Written by funniman.exe (c) 2026               //
-//                  Lasted updated - 20/10/2026                  //
+//                  Lasted updated - 23/10/2026                  //
 // ------------------------------------------------------------- //
 
 #include "main.h"
+#include "fc_globls.h"
+#include "fc_main_screen.h"
+#include "liblvgl/widgets/lv_label.h"
 
 namespace xfc
 {
@@ -44,37 +47,60 @@ namespace xfc
 	{
 		while ( true )
 		{
-			if ( pros::battery::get_capacity() <= 5 )
+			if ( pros::battery::get_capacity() <= 10 )
 				goto __battery_critical;
 
-			if ( pros::battery::get_capacity() <= 10 )
+			if ( pros::battery::get_capacity() <= 20 )
 				break;
 			
-			pros::delay( 125 );
+			pros::delay( 250 );
 		}
 
 		xfc::globals::g_cMaster->clear();
 		xfc::globals::g_cSlave->clear();
 
-		fc_log( logTypes::Info, true, false, __func__, "Brain battery is low!\n" );
+		fc_log( logTypes::Warning, true, false, __func__, "Brain battery is low!\n" );
 
 		globals::g_cMaster->rumble( "-..-..-" );
 
 		while ( true )
 		{
-			if ( pros::battery::get_capacity() <= 5 )
+			if ( pros::battery::get_capacity() <= 10 )
 				break;
 			
-			pros::delay( 125 );
+			pros::delay( 250 );
 		}
 
 	__battery_critical:
 		xfc::globals::g_cMaster->clear();
 		xfc::globals::g_cSlave->clear();
 
-		fc_log( logTypes::Info, true, false, __func__, "Brain battery is critically low!\n" );
+		fc_log( logTypes::ERROR, true, false, __func__, "Brain battery is critically low!\n" );
 
 		globals::g_cMaster->rumble( "-...-...-" );
+	}
+
+	namespace globals
+	{
+		// main screen ui stuff
+		lv_obj_t *g_xPosLabel = nullptr;
+		lv_obj_t *g_yPosLabel = nullptr;
+		lv_obj_t *g_thetaLabel = nullptr;
+	}
+
+	void fc_updateMainScreen()
+	{
+		char* temp = cFmt( "X Pos: #ff0000 %f#", globals::g_cChassis.getPose().x );
+		lv_label_set_text( globals::g_xPosLabel , temp );
+		delete[] temp;
+
+		temp = cFmt( "Y Pos: #00ff00 %f#", globals::g_cChassis.getPose().y );
+		lv_label_set_text( globals::g_yPosLabel , temp );
+		delete[] temp;
+
+		temp = cFmt( "Theta: #0000ff %f#", globals::g_cChassis.getPose().theta );
+		lv_label_set_text( globals::g_thetaLabel , temp );
+		delete[] temp;
 	}
 }
 

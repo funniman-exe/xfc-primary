@@ -1,4 +1,8 @@
+#include "fc_globls.h"
+#include "liblvgl/core/lv_obj_pos.h"
+#include "liblvgl/widgets/lv_label.h"
 #include "main.h"
+#include "fc_main_screen.h"
 
 #define TABBER_VISIBLE_ON_START
 
@@ -10,6 +14,23 @@ namespace xfc
 	{
 		lv_obj_t *iTabMain_CentrePiece = lv_img_create( globals::g_tTabMain );
 		lv_img_set_src( iTabMain_CentrePiece, &SCARY );
+		lv_obj_set_pos( iTabMain_CentrePiece , lv_obj_get_width( lv_scr_act() ) / 2 , lv_obj_get_height( lv_scr_act() ) / 2 );
+
+		globals::g_xPosLabel = lv_label_create( globals::g_tTabMain );
+		globals::g_yPosLabel = lv_label_create( globals::g_tTabMain );
+		globals::g_thetaLabel = lv_label_create( globals::g_tTabMain );
+
+		lv_label_set_recolor( globals::g_xPosLabel , true );
+		lv_label_set_recolor( globals::g_yPosLabel , true );
+		lv_label_set_recolor( globals::g_thetaLabel , true );
+
+		lv_obj_set_size( globals::g_xPosLabel , lv_pct( 300 ), lv_pct( 300 ) );
+		lv_obj_set_size( globals::g_yPosLabel , lv_pct( 300 ), lv_pct( 300 ) );
+		lv_obj_set_size( globals::g_thetaLabel , lv_pct( 300 ), lv_pct( 300 ) );
+
+		lv_obj_set_pos( globals::g_xPosLabel , 0 , 0 );
+		lv_obj_set_pos( globals::g_yPosLabel , 0 , 20 );
+		lv_obj_set_pos( globals::g_thetaLabel , 0 , 40 );
 	}
 
 	void fc_vis_init()
@@ -64,8 +85,6 @@ void initialize()
 	xfc::fc_log( xfc::logTypes::Info, false, false, __func__, "  (c) 2026 funniman.exe\n" );
 	xfc::fc_log( xfc::logTypes::Debug, false, true, __func__, "Init Start\n" );
 
-	pros::Task batteryLoop( xfc::fc_batteryLoop );
-
 	bool okToCalibrate = xfc::fc_checkSmartDeviceInstalled( IMUPort );
 
 	if ( okToCalibrate )
@@ -99,6 +118,8 @@ void initialize()
 		xfc::fc_log( xfc::logTypes::Warning, false, true, __func__, "Skipping IMU Calibration (not installed)\n" );
 	
 	xfc::fc_initInput();
+
+	pros::Task batteryLoop( xfc::fc_batteryLoop );
 
 	xfc::fc_startup();
 }

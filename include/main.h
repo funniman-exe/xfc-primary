@@ -31,6 +31,7 @@ namespace xfc
     void fc_startup();
     void fc_shutdown();
     void fc_batteryLoop();
+	void fc_updateMainScreen();
 }
 
 /**
