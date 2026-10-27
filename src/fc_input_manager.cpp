@@ -64,10 +64,10 @@ namespace xfc
 	#define gantryHighestDegrees 0
 
 	/// @brief Formula to slow motor speed near the limit of the motor range
-	/// @param maxVoltage uint8_t voltage to pass to motors (clamped to a range from 0 to 127)
-	/// @param minVoltage uint8_t voltage to pass to motors (clamped to a range from 0 to 127)
-	/// @param limitInitial degrees of encoder to begin enforcing speed decrease
-	/// @param limitFinal degrees of encoder defining the absolute limit of the motor position
+	/// @param maxVoltage [uint8_t] minimum allowable voltage to pass to motors (clamped to a range from 0 to 127)
+	/// @param minVoltage [uint8_t] maximum allowable voltage to pass to motors (clamped to a range from 0 to 127)
+	/// @param limitInitial [double] degrees of encoder to begin enforcing speed decrease
+	/// @param limitFinal [double] degrees of encoder defining the absolute limit of the motor position
 	/// @return adjusted motor voltage (clamped to a range from minVoltage to maxVoltage)
 	double fc_gantryLimitFormula( uint8_t maxVoltage, uint8_t minVoltage, double limitInitial, double limitFinal )
 	{
@@ -85,15 +85,20 @@ namespace xfc
 		return std::max( static_cast<double>( minVoltage ), static_cast<double>( maxVoltage ) * std::min( static_cast<double>( 1 ), result ) );
 	}
 	
+	// #define GANTRY_POSITION_STEPPING
+
 	/// @brief INTERNAL
 	void fc_updateGantry()
 	{
+#ifdef GANTRY_POSITION_STEPPING
 		static int8_t lastMoveDir = 0;
 		static double lastMovingAngle = 0;
+#endif
 
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
 		{
+#ifdef GANTRY_POSITION_STEPPING
 			if ( lastMovingAngle == 0 )
 				lastMovingAngle = static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 );
 
@@ -165,13 +170,18 @@ namespace xfc
 					globals::g_mgGantry.brake();
 				}
 			}
+#else
+			globals::g_mgGantry.brake();
+#endif
 		}
 
 		if ( globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
 		{
+#ifdef GANTRY_POSITION_STEPPING
 			lastMoveDir = 1;
 			lastMovingAngle = 0;
+#endif
 
 			if ( ( static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 ) ) < 80 )
 			{
@@ -188,8 +198,10 @@ namespace xfc
 		if ( !globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R1 )
 			&& globals::g_cMaster->get_digital( pros::controller_digital_e_t::E_CONTROLLER_DIGITAL_R2 ) )
 		{
+#ifdef GANTRY_POSITION_STEPPING
 			lastMoveDir = -1;
 			lastMovingAngle = 0;
+#endif
 
 			if ( ( static_cast<double>( globals::g_eGantryMonitor.get_angle() ) / static_cast<double>( 100 ) ) < 40 )
 			{

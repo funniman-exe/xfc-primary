@@ -30,8 +30,8 @@ namespace xfc
         pros::Controller *g_cSlave = nullptr;
 
         // Motors -- negitive numbers denote reversed motors
-        pros::MotorGroup g_mgLeft( { MGLeft1Port, -MGLeft2Port, MGLeft3Port }, pros::MotorGearset::blue );
-        pros::MotorGroup g_mgRight( { -MGRight1Port, MGRight2Port, -MGRight3Port }, pros::MotorGearset::blue );
+        pros::MotorGroup g_mgLeft( { MGLeft1Port, MGLeft2Port, -MGLeft3Port }, pros::MotorGearset::blue );
+        pros::MotorGroup g_mgRight( { MGRight1Port, MGRight2Port, -MGRight3Port }, pros::MotorGearset::blue );
 
         pros::MotorGroup g_mgGantry( { -MGGantry1Port, MGGantry2Port }, pros::MotorGearset::red );
 

@@ -12,11 +12,11 @@
 #define scr_height 240
 #define scr_height_full ( scr_height + 32 )
 
-#define MGLeft1Port 1
-#define MGLeft2Port 2
-#define MGLeft3Port 3
+#define MGLeft1Port 12
+#define MGLeft2Port 13
+#define MGLeft3Port 14
 
-#define MGRight1Port 6
+#define MGRight1Port 7
 #define MGRight2Port 8
 #define MGRight3Port 9
 
@@ -25,7 +25,7 @@
 
 #define GantryTrackingPort 19
 
-#define IMUPort 11
+#define IMUPort 19
 
 // NOT SET UP
 #define HorizTrackingPort 13

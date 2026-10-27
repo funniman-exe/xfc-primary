@@ -14,7 +14,7 @@ namespace xfc
 	{
 		lv_obj_t *iTabMain_CentrePiece = lv_img_create( globals::g_tTabMain );
 		lv_img_set_src( iTabMain_CentrePiece, &SCARY );
-		lv_obj_set_pos( iTabMain_CentrePiece , lv_obj_get_width( lv_scr_act() ) / 2 , lv_obj_get_height( lv_scr_act() ) / 2 );
+		lv_obj_set_pos( iTabMain_CentrePiece , scr_width / 2 , scr_height / 2 );
 
 		globals::g_xPosLabel = lv_label_create( globals::g_tTabMain );
 		globals::g_yPosLabel = lv_label_create( globals::g_tTabMain );
